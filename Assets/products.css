@@ -1,0 +1,9 @@
+/* filters */
+.filter-item {
+    margin: 4px 3px;
+}
+
+.filters_list-item {
+    padding: 20px 0;
+    border-bottom: 1px solid;
+}

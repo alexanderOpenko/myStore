@@ -1,0 +1,23 @@
+{
+    "scripts": {
+        "build": "webpack --mode development",
+        "babel": "npx babel --watch components/src --out-dir components/babel --presets react-app/prod",
+        "proxy": "mkcert -install && mkcert localhost && local-ssl-proxy --source 3010 --target 80 --cert localhost.pem --key localhost-key.pem"
+    },
+    "dependencies": {
+        "@selectize/selectize": "^0.15.2",
+        "babel-cli": "^6.26.0",
+        "babel-preset-react-app": "^3.1.2",
+        "local-ssl-proxy": "^2.0.5",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-range": "^1.8.14",
+        "swiper": "^10.1.0"
+    },
+    "devDependencies": {
+        "css-loader": "^6.8.1",
+        "style-loader": "^3.3.3",
+        "webpack": "^5.88.2",
+        "webpack-cli": "^5.1.4"
+    }
+}

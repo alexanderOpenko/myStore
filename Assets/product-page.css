@@ -1,0 +1,35 @@
+.product {
+    align-items: start!important;
+}
+
+.product-images {
+    width: 60%;
+    margin-right: 40px;
+}
+.product-base-info {
+    width: 40%;
+}
+
+.product-base-info h2.info-label {
+    margin: 0;
+}
+
+.product-base-info {
+    height: 46vh;
+}
+
+.slider-product-page .swiper img {
+    margin: 0 auto;
+    display: block;
+}
+
+.slider-product-page .swiper {
+    max-width: 1300px;
+    margin: 0 auto;
+    height: 80vh;
+    padding-bottom: 35px!important;
+}
+
+.slider-product-page {
+    height: 93vh;
+}

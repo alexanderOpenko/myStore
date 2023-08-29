@@ -1,0 +1,17 @@
+.cart-item_image {
+    max-width: 100px;
+}
+
+.cart-item {
+    display: flex;
+    margin-bottom: 15px;
+}
+
+.cart-item_info {
+    padding: 0 15px 15px;
+}
+
+.q-icon {
+    width: 15px;
+    height: 20px;
+}
