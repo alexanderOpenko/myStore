@@ -1,87 +1,65 @@
-<div class="tray">
-    <nav class="menu">
-        <ul class="large-font">
-            <li class="menu-item">
-                <a href="/admin_products">
-                    АДМІН
-                </a>
-            </li>
-             <li class="menu-item">
-                <a href="/products?collection=all">
-                    ВСІ ТОВАРИ
-                </a>
-            </li>
-            <li class="menu-item">
-                <a href="/products?collection=футболки">
-                    Футболки
-                </a>
-            </li>
-            <li class="menu-item">
-                <a href="/products?collection=поло">
-                    Футболки поло
-                </a>
-            </li>
-            <li class="menu-item">
-                <a href="/products?collection=свитшоты">
-                    Світшоти
-                </a>
-            </li>
-            <li class="menu-item">
-                <a href="/products?collection=куртки">
-                    Куртки
-                </a>
-            </li>
-            <li class="menu-item">
-                <a href="/products?collection=кепки">
-                    Кепки
-                </a>
-            </li>
-            <li class="menu-item"> 
-                <a href="/products?collection=костюмы">
-                    Літні Костюми/Спортивні Костюми
-                </a>
-            </li>
-            <li class="menu-item">
-            <a href="/products?collection=джинсы">
-                Штани
+<?php require_once 'Assets/icons.php' ?>
+
+<nav class="menu">
+    <ul class="flex-row">
+        <li class="menu-item interactive-menu-item">
+            <div class="flex-row align-center pointer">
+                <div> Одяг </div>
+                <div class="mini-icon ml-5"><?php echo icon('arrow_down') ?></div>
+            </div>
+
+            <div class="mask-background">
+            </div>
+
+            <ul class="menu-item_submenu p30">
+                <li class="mb-10">
+                    <a href="/products?collection=94">
+                        Футболки
+                    </a>
+                </li>
+
+                <li class="mb-10">
+                    <a href="/products?collection=95">
+                        Світшоти
+                    </a>
+                </li>
+
+                <li class="mb-10">
+                    <a href="/products?collection=96">
+                        Штани
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="menu-item interactive-menu-item">
+            <div class="flex-row align-center pointer">
+                <div> Взуття </div>
+                <div class="mini-icon ml-5"><?php echo icon('arrow_down') ?></div>
+            </div>
+
+            <div class="mask-background">
+            </div>
+
+            <ul class="menu-item_submenu p30">
+                <li>
+                    <a href="/products?collection=97">
+                        Взуття
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="menu-item">
+            <a href="/products?collection=all">
+                Всі товари
             </a>
-            </li>
-            <li class="menu-item">
-            <a href="/products?collection=шорти">
-                Шорти
-                </a>
-            </li>
-            <li class="menu-item">
-                Спідня Білизна
-            </li>
-            <li class="menu-item">
-            <a href="/products?collection=обувь">
-                Взуття
+        </li>
+
+        <li class="menu-item">
+            <a href="/admin_products">
+                АДМІН
             </a>
-            </li>
-            <li class="menu-item">
-                <a href="/products?collection=сумка">
-                    Сумки та аксесуари
-                </a>
-            </li>
-        </ul>
-    </nav>
-</div>
-
-<script>
-    const dropdownMenu = document.querySelector('.menu-switch .tray')
-    const menuSwitch = document.querySelector('.menu-switch')
-    const body = document.querySelector('body')
-
-    menuSwitch.addEventListener('mouseover', function() {
-        dropdownMenu.classList.add('slide_in')
-        dropdownMenu.classList.remove('slide_out')
-        body.classList.add('mask-background')
-    })
-
-    menuSwitch.addEventListener('mouseout', function() {
-        dropdownMenu.classList.add('slide_out')
-        dropdownMenu.classList.remove('slide_in', 'mask-background')
-        body.classList.remove('mask-background')
-    })
-</script>
+        </li>
+    </ul>
+</nav>

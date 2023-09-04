@@ -22,7 +22,10 @@
 
 .flex-between {
     justify-content: space-between;
-    align-items: center;
+}
+
+.flex-end {
+    justify-content: flex-end;
 }
 
 .wrap-grid {
@@ -39,7 +42,13 @@
     margin: 0 15px 15px 0;
 }
 
-.four-desc-grid:nth-child(4n+4),
-.two-desc-grid:nth-child(2n+2){
+.three-desc-grid {
+    width: calc(33% - 9px);
+    margin: 0 15px 15px 0;
+}
+
+.four-desc-grid:nth-of-type(4n),
+.product-images .three-desc-grid:nth-of-type(3n+5),
+.two-desc-grid:nth-of-type(2n){
     margin-right: 0;
 }

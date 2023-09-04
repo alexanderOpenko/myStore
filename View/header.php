@@ -5,24 +5,24 @@
     <link rel="stylesheet" href="../Assets/cart.css">
 </head>
 
+<div class="mask">
+</div>
+
 <header>
-    <div class="desc-menu flex-row flex-between">
-        <div class="menu-switch">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="black" viewBox="0 0 50 50" width="50px">
-                <path d="M 0 9 L 0 11 L 50 11 L 50 9 Z M 0 24 L 0 26 L 50 26 L 50 24 Z M 0 39 L 0 41 L 50 41 L 50 39 Z"></path>
-            </svg>
+    <div class="desc-menu header-body">
+        <div>
             <?php include 'menu.php' ?>
         </div>
 
-        <div class="header-logo">
-            BESTO
+        <div class="header-logo large-index">
+            BRADA
         </div>
 
-        <div class="header-cart">
+        <div class="header-cart large-index flex-row flex-end">
             <div id="cart">
             </div>
         </div>
     </div>
 </header>
 
-<script src="../components/build/components.bundle.js"></script>
+<script defer src="../components/build/components.bundle.js"></script>

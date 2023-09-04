@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import ProductsFilter from "./productsFilter";
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 const Products = ({ products }) => {
   const [allproducts, setAllproducts] = useState(products)
@@ -21,7 +22,6 @@ const Products = ({ products }) => {
         const sizeMatch = sizeFilterOptions.length ? sizeFilterOptions.some(s => el.size.includes(s)) : true  
         const priceMatch = priceFilterOptions.length ? price >= priceFilterOptions[0] && price <= priceFilterOptions[1] : true // range - это массив из двух элементов: минимальная и максимальная цена
       
-        // возвращаем только те товары, которые удовлетворяют всем трем условиям
         return colorMatch && sizeMatch && priceMatch
       })
 
@@ -31,30 +31,33 @@ const Products = ({ products }) => {
 
   return <div className="products">
     <div className="container flex-row">
-      <div className="products_filters mr-30">
-        <ProductsFilter handleFilters={handleProductsByFilters}/>
-      </div>
-
-      <div className="products-list flex-row wrap-grid">
+      <div className="products-list flex-row wrap-grid mr-30 width80">
         {allproducts.map((el, i) => {
-          return <div key={i} className="product four-desc-grid">
-            <a href={"/products?p=" + el.sku}>
-              <div className="product_image">
-                <img src={el.image_path} />
+          return <div key={i} className="product four-desc-grid flex-column">
+            <a href={"/products?p=" + el.sku} class="flex-column flex-between heigth100"> 
+              <div className="product_image heigth100 mb-10">
+               <LazyLoadImage 
+                className={"heigth100 cover"}
+                src={el.image_path}
+               />
               </div>
 
               <div className="product_info">
-                <div className="product_info-name">
+                <div className="product_info-name mb-10 bold-label">
                   {el.name}
                 </div>
 
                 <div className="product_info-price">
-                  {el.price}
+                  {el.price} ₴
                 </div>
               </div>
             </a>
           </div>
         })}
+      </div>
+
+      <div className="products_filters width20">
+        <ProductsFilter collection={products[0].collection} handleFilters={handleProductsByFilters}/>
       </div>
     </div>
   </div>

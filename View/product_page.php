@@ -10,33 +10,33 @@
 
 <div class="product-page container">
     <!-- split in two class -->
-    <div class="message">
-
-    </div>
-
-    <div class="product flex-row flex-between" data-products='<?php echo json_encode($this->product, JSON_UNESCAPED_UNICODE) ?>'>
+    <div class="product flex-row width100 justify-center" data-products='<?php echo json_encode($this->product, JSON_UNESCAPED_UNICODE) ?>'>
         <div class="product-images">
-            <div id="productPageImages" data-id='<?php echo $this->product[0]['product_id']?>'>
+            <div id="productPageImages" data-id='<?php echo $this->product[0]['product_id'] ?>'>
             </div>
         </div>
 
-        <div class="product-base-info flex-column flex-around">
+        <div class="product-base-info flex-column">
             <div>
                 <div class="info-label primary-label body1">
-                    <?php echo $this->product[0]['name'] ?>
+                    <?php echo $this->product[0]['collection'] ?>
+                </div>
+
+                <div class="info-label body1">
+                    <?php echo $this->product[0]['sku'] ?>
                 </div>
 
                 <h2 class="info-label">
                     <?php echo $this->product[0]['producer'] ?>
                 </h2>
 
-                <div class="info-label body1">
-                    <?php echo $this->product[0]['description'] ?>
+                <div class="info-label body1 mb-30">
+                    <?php echo $this->product[0]['name'] ?>
                 </div>
             </div>
 
-            <div class="info-label large1">
-                 <?php echo $this->product[0]['price'] ?> ₴
+            <div class="info-label large1 mb-30">
+                <?php echo $this->product[0]['price'] ?> ₴
             </div>
 
             <div class="product-form">
@@ -48,9 +48,12 @@
                         </select>
                     </div>
 
-                    <button type="submit">
+                    <button type="submit" class="primary-button width80">
                         Add to cart
                     </button>
+
+                    <div class="message hidden">
+                    </div>
                 </form>
             </div>
         </div>
@@ -58,24 +61,35 @@
 </div>
 </div>
 
-<script src="../components/build/components.bundle.js"></script>
-
-<script>  
+<script>
     const formBtn = document.querySelector('.product-form button')
     const productsData = document.querySelector('.product').dataset.products
     const productsObj = JSON.parse(productsData)
-    console.log(productsObj, 'productsObj');
     const sizesHolder = $('.size-options select')
     formBtn.addEventListener('click', (e) => formHandler(e))
 
     productsObj.forEach(el => {
-        sizesHolder.append(`<option value=${el.size}>${el.size}</option>`)
+        let disabled = ''
+
+        if (el.quantity <= 0) {
+            disabled = 'disabled'
+        }
+
+        sizesHolder.append(`
+        <option 
+            value=${el.size}
+            ${disabled}
+        >
+        ${el.size}
+            </option>
+        `)
     });
 
     $('.size-options select').selectize()
 
     async function formHandler(e) {
         e.preventDefault()
+        const cart = document.querySelector('.cart-count')
         const sku = document.querySelector('.form-sku').value
         const size = document.querySelector('.form-size option[selected="selected"]').value
 
@@ -91,8 +105,29 @@
         })
 
         const resp = await cartPesp.json();
+        cart.innerHTML = resp.body.total_count
+
         if (resp.message) {
-            document.querySelector('.message').innerHTML = resp.message
+            const messageHolder = document.querySelector('.message')
+            const respMessage = resp.message[0]
+            const variant = respMessage.split(' ')[0]
+            let message = ''
+
+            if (respMessage.includes('last counts of items')) {
+                message = `Додано в корзину останню одиницю товару ${variant}`
+            }
+
+            if (respMessage.includes('added to cart') && !respMessage.includes('last counts of items')) {
+                message = `${variant} додано в корзину`
+            }
+
+            if (respMessage.includes('out of stock')) {
+                message = `В корзину додано всі доступні варіанти ${variant}`
+            }
+            
+            messageHolder.classList.remove('hidden')
+            messageHolder.innerHTML = message
+            setTimeout(() => { messageHolder.classList.add('hidden') }, 4500)
         }
     }
 </script>

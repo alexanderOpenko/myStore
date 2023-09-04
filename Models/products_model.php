@@ -44,24 +44,18 @@
     {
         global $connect;
 
-        $sql_query = "SELECT p.name, po.quantity, po.*, pm.image_path FROM products AS p 
+        $sql_query = "SELECT p.name, p.price, po.quantity, po.*, pm.image_path FROM products AS p 
         LEFT JOIN product_options AS po 
         ON p.sku = po.sku 
         LEFT JOIN products_media AS pm
         ON p.id = pm.product_id AND pm.media_type = 'main'
-        WHERE po.sku IN (";
+        WHERE (";
 
         foreach ($_SESSION['cart'] as $item) {
-            $sql_query .= "'" . $item['sku'] . "',";
-        }
+            $sql_query .= "(po.sku = '" . $item['sku'] . "' and po.size = '" . $item['size'] . "') OR ";
+          }
 
-        $sql_query = substr($sql_query, 0, -1) . ") AND po.size IN (";
-
-        foreach ($_SESSION['cart'] as $item) {
-            $sql_query .= "'" . $item['size'] . "',";
-        }
-
-        $sql_query = substr($sql_query, 0, -1) . ") ORDER BY name ASC";
+          $sql_query = substr($sql_query, 0, -4) . ")";
 
         try {
             $rows = $connect->query($sql_query);
@@ -71,7 +65,6 @@
             return $rows->fetch_all(MYSQLI_ASSOC);
         } catch (Exception $e) {
             error_log($e->getMessage());
-            //die('huy');
         }
     }
 
@@ -171,21 +164,23 @@
         return $newArr;
     }
 
-    public static function get_collection($like_str)
+    public static function get_collection($collection_id)
     {
         global $connect;
-        if ($like_str != 'all') {
-            $condition = "WHERE p.tags LIKE '%$like_str%' OR p.name LIKE '%$like_str%'";
+        if ($collection_id != 'all') {
+            $condition = "WHERE collection = '$collection_id'";
         } else {
             $condition = '';
         };
 
-        $sql_query = "SELECT p.*, po.color, po.size, pm.*
+        $sql_query = "SELECT p.*, c.name AS collection, po.color, po.size, pm.*
         FROM products p
         LEFT JOIN product_options po
         ON p.sku = po.sku
         LEFT JOIN products_media as pm
-        ON p.id = pm.product_id AND pm.media_type = 'main'" . " " . $condition . " ORDER BY p.id DESC";
+        ON p.id = pm.product_id AND pm.media_type = 'main'
+        LEFT JOIN collections as c
+        ON p.collection = c.id" . " " . $condition . " ORDER BY p.id DESC";
 
         try {
             $rows = $connect->query($sql_query);

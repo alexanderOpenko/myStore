@@ -12,7 +12,6 @@ $weight = $this->product ? $this->product[0]['weight'] : '';
 $size_quantity = $this->size_quantity_pairs;
 
 include 'View/header.php';
-require 'Assets/icons.php';
 ?>
 
 <div class="container flex-row">

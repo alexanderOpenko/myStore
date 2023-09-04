@@ -3,20 +3,14 @@
 }
 
 .product-images {
-    width: 60%;
-    margin-right: 40px;
-}
-.product-base-info {
-    width: 40%;
+    width: calc(85% - 2.4rem);
+    margin-right: 33px;
 }
 
 .product-base-info h2.info-label {
     margin: 0;
 }
 
-.product-base-info {
-    height: 46vh;
-}
 
 .slider-product-page .swiper img {
     margin: 0 auto;
@@ -32,4 +26,25 @@
 
 .slider-product-page {
     height: 93vh;
+}
+
+.product-base-info .selectize-input {
+    padding: 12px 15px;
+    background-color: unset!important;
+    background-image: unset!important;
+    border-radius: 10px!important;
+    border-color: rgb(24, 24, 24)!important;
+}
+
+.product-form .message {
+    position: absolute;
+    padding: 20px;
+    border: 1px solid #43d943;
+    margin-top: 20px;
+}
+
+.product-base-info {
+    width: calc(41.6667% - 2.4rem);
+    position: sticky;
+    top: 100px;
 }

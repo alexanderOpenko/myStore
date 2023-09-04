@@ -13,6 +13,8 @@ $response_messages = [
 class Cart_controller {
     public $cart_products;
     public $message = [];
+    public $total_price = 0;
+    public $total_count = 0;
     public function decrease_quantity($sku, $size) {
         global $response_messages;
         $variant = $sku . '/' . $size;
@@ -31,7 +33,7 @@ class Cart_controller {
         $variant = $sku . '/' . $size;
 
         if(isset($_SESSION['cart'][$variant])) { 
-            if (intval($product['quantity']) == $_SESSION['cart'][$variant]['quantity']) {
+            if (intval($product['quantity']) <= $_SESSION['cart'][$variant]['quantity']) {
                 $this->message[] = "$variant out of stock";
                 return;
             }
@@ -62,14 +64,18 @@ class Cart_controller {
     }
   
     public function get_cart_items() {
+        global $response_messages;
         if (empty($_SESSION['cart'])) {
-            set_HTTP_status(400, $this->message, []);
+            set_HTTP_status(400, $this->message, ["cart" => [], 0]);
             die();
         }
 
         $cart_items = Products_model::get_cart_variants();
         $this->cart_products = $cart_items;
         $this->set_quantity_to_items();
+
+        set_HTTP_status(200, $this->message, 
+    ["cart" => $this->cart_products, "total_price" => $this->total_price, "total_count" => $this->total_count]);
     }
 
     public function set_quantity_to_items() {
@@ -78,21 +84,18 @@ class Cart_controller {
 
             if(array_key_exists($variant, $_SESSION['cart'])) {
                 $product['cart_quantity'] = $_SESSION['cart'][$variant]['quantity']; 
-            }
-        }
-        
-        foreach($this->cart_products as &$item) {
-            if ($item['cart_quantity'] == $item['quantity']) {
-                $item['last'] = true;
-            }
+                $this->total_price += $product['price'] * $product['cart_quantity'];
+                $this->total_count += $product['cart_quantity'];
 
-            if ($item['cart_quantity'] > $item['quantity']) {
-                $item['last'] = true;
-                $item['cart_quantity'] = $item['quantity'];
-            }
-
-            if ($item['quantity'] <= 0) {
-                $item['out'] = true;
+                if ($product['quantity'] <= 0) {
+                    $product['out'] = true;
+                    continue;
+                }
+    
+                if ($product['cart_quantity'] >= $product['quantity']) {
+                    $product['last'] = true;
+                    $product['available_only'] = $product['quantity'];
+                }
             }
         }
     }
@@ -103,18 +106,15 @@ $cart = new Cart_controller();
 if ($method == "POST" && $request_data['action'] == "Add") {
     $cart->add_to_cart($request_data['sku'], $request_data['size']);
     $cart->get_cart_items();
-    set_HTTP_status(200, $cart->message, $cart->cart_products);
 } 
 
 if ($method == "POST" && $request_data['action'] == "Decrease") {
     $cart->decrease_quantity($request_data['sku'], $request_data['size']);
     $cart->get_cart_items();
-    // set_HTTP_status(200, $response_messages["cart_products"], $cart->cart_products);
 } 
 
 if ($method == "GET") {
     $cart->get_cart_items();
-    set_HTTP_status(200, $response_messages["cart_products"], $cart->cart_products);
 }
 
 ?>

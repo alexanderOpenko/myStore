@@ -7,36 +7,45 @@ import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 import 'swiper/css/scrollbar'
 
-const RenderImages = ({ images, openImage }) => {
-    return images.map((el, i) => {
-        if (el.media_type != 'video') {
-            return <div key={i} className="two-desc-grid cursor-zoom" onClick={() => openImage('active')}>
-                <img src={el.image_path} />
-            </div>
-        }
-    })
-}
-
 const ProductPageImages = ({ productId }) => {
     const [activePopUp, setActivePopUp] = useState('inactive')
     const [productMedia, setProductMedia] = useState([])
+    const [activeSlider, setActiveSlider] = useState(0)
 
     const getProductMedia = async () => {
         const resp = await fetch(`/products?get_media=true&id=${productId}`);
         const json = await resp.json()
         const parsedBody = JSON.parse(json.body)
-        setProductMedia(parsedBody); 
+        setProductMedia(parsedBody);
     }
 
     useEffect(() => {
         getProductMedia()
     }, [])
 
+    const imageClickHandler = (i) => {
+        setActivePopUp('active')
+        setActiveSlider(i)
+    }
+
     return <div>
-        <div className="wrap-grid flex-row">
-            <RenderImages images={productMedia} openImage={setActivePopUp} />
+        {/* main images */}
+        <div className="wrap-grid flex-row justify-center main-product-images">
+            {productMedia.map((el, i) => {
+                const gridClass = i <= 1 ? "two-desc-grid" : "three-desc-grid"
+
+                if (el.media_type != 'video') {
+                    return <div
+                        key={i}
+                        className={"cursor-zoom " + gridClass}
+                        onClick={() => imageClickHandler(i)}>
+                        <img src={el.image_path} />
+                    </div>
+                }
+            })}
         </div>
 
+        {/* video */}
         {productMedia.map((el, i) => {
             if (el.media_type == 'video') {
                 return <div className="video-player">
@@ -49,22 +58,29 @@ const ProductPageImages = ({ productId }) => {
 
         <PopUp active={activePopUp} setActive={setActivePopUp}>
             <div className="slider-product-page align-center flex-row">
-                <ProductPageImagesSlider images={productMedia} />
+                <ProductPageImagesSlider images={productMedia} activeSlider={activeSlider} />
             </div>
         </PopUp>
     </div>
 }
 
-const ProductPageImagesSlider = ({ images }) => {
+const ProductPageImagesSlider = ({ images, activeSlider }) => {
+    const [swiper, setSwiper] = useState(null);
+
+    useEffect(() => {
+        if (swiper) {
+            swiper.slideTo(activeSlider);
+        }
+    }, [activeSlider])
+
     return <Swiper
+        onSwiper={setSwiper}
         spaceBetween={50}
         slidesPerView={1}
         modules={[Navigation, Scrollbar]}
         speed={700}
         navigation
         scrollbar={{ draggable: true }}
-        onSlideChange={() => console.log('slide change')}
-        onSwiper={(swiper) => console.log(swiper)}
     >
         {images.map((el, i) => {
             if (el.media_type != 'video') {

@@ -15,25 +15,8 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 
-var RenderImages = function RenderImages(_ref) {
-    var images = _ref.images,
-        openImage = _ref.openImage;
-
-    return images.map(function (el, i) {
-        if (el.media_type != 'video') {
-            return React.createElement(
-                "div",
-                { key: i, className: "two-desc-grid cursor-zoom", onClick: function onClick() {
-                        return openImage('active');
-                    } },
-                React.createElement("img", { src: el.image_path })
-            );
-        }
-    });
-};
-
-var ProductPageImages = function ProductPageImages(_ref2) {
-    var productId = _ref2.productId;
+var ProductPageImages = function ProductPageImages(_ref) {
+    var productId = _ref.productId;
 
     var _useState = useState('inactive'),
         _useState2 = _slicedToArray(_useState, 2),
@@ -45,8 +28,13 @@ var ProductPageImages = function ProductPageImages(_ref2) {
         productMedia = _useState4[0],
         setProductMedia = _useState4[1];
 
+    var _useState5 = useState(0),
+        _useState6 = _slicedToArray(_useState5, 2),
+        activeSlider = _useState6[0],
+        setActiveSlider = _useState6[1];
+
     var getProductMedia = function () {
-        var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee() {
+        var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee() {
             var resp, json, parsedBody;
             return _regeneratorRuntime.wrap(function _callee$(_context) {
                 while (1) {
@@ -75,7 +63,7 @@ var ProductPageImages = function ProductPageImages(_ref2) {
         }));
 
         return function getProductMedia() {
-            return _ref3.apply(this, arguments);
+            return _ref2.apply(this, arguments);
         };
     }();
 
@@ -83,13 +71,33 @@ var ProductPageImages = function ProductPageImages(_ref2) {
         getProductMedia();
     }, []);
 
+    var imageClickHandler = function imageClickHandler(i) {
+        setActivePopUp('active');
+        setActiveSlider(i);
+    };
+
     return React.createElement(
         "div",
         null,
         React.createElement(
             "div",
-            { className: "wrap-grid flex-row" },
-            React.createElement(RenderImages, { images: productMedia, openImage: setActivePopUp })
+            { className: "wrap-grid flex-row justify-center main-product-images" },
+            productMedia.map(function (el, i) {
+                var gridClass = i <= 1 ? "two-desc-grid" : "three-desc-grid";
+
+                if (el.media_type != 'video') {
+                    return React.createElement(
+                        "div",
+                        {
+                            key: i,
+                            className: "cursor-zoom " + gridClass,
+                            onClick: function onClick() {
+                                return imageClickHandler(i);
+                            } },
+                        React.createElement("img", { src: el.image_path })
+                    );
+                }
+            })
         ),
         productMedia.map(function (el, i) {
             if (el.media_type == 'video') {
@@ -110,30 +118,37 @@ var ProductPageImages = function ProductPageImages(_ref2) {
             React.createElement(
                 "div",
                 { className: "slider-product-page align-center flex-row" },
-                React.createElement(ProductPageImagesSlider, { images: productMedia })
+                React.createElement(ProductPageImagesSlider, { images: productMedia, activeSlider: activeSlider })
             )
         )
     );
 };
 
-var ProductPageImagesSlider = function ProductPageImagesSlider(_ref4) {
-    var images = _ref4.images;
+var ProductPageImagesSlider = function ProductPageImagesSlider(_ref3) {
+    var images = _ref3.images,
+        activeSlider = _ref3.activeSlider;
+
+    var _useState7 = useState(null),
+        _useState8 = _slicedToArray(_useState7, 2),
+        swiper = _useState8[0],
+        setSwiper = _useState8[1];
+
+    useEffect(function () {
+        if (swiper) {
+            swiper.slideTo(activeSlider);
+        }
+    }, [activeSlider]);
 
     return React.createElement(
         Swiper,
         {
+            onSwiper: setSwiper,
             spaceBetween: 50,
             slidesPerView: 1,
             modules: [Navigation, Scrollbar],
             speed: 700,
             navigation: true,
-            scrollbar: { draggable: true },
-            onSlideChange: function onSlideChange() {
-                return console.log('slide change');
-            },
-            onSwiper: function onSwiper(swiper) {
-                return console.log(swiper);
-            }
+            scrollbar: { draggable: true }
         },
         images.map(function (el, i) {
             if (el.media_type != 'video') {

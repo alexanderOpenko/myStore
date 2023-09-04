@@ -19,7 +19,7 @@ var PopUp = function PopUp(_ref) {
                 { className: "close-popup" },
                 React.createElement(
                     "div",
-                    { className: "close-popup-icon pointer", onClick: function onClick() {
+                    { className: "close-popup-icon pointer standart-icon", onClick: function onClick() {
                             return setActive('inactive');
                         } },
                     React.createElement(Icons, { icon: 'close' })

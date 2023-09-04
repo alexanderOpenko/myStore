@@ -159,7 +159,7 @@ const AdminMedia = ({ products }) => {
                     </div> : ''}
 
                         <div>
-                            <div className="delete_media" onClick={() => {deleteImageHandler(mainImage.public_id)}}>
+                            <div className="delete_media standart-icon" onClick={() => {deleteImageHandler(mainImage.public_id)}}>
                                 <Icons icon={'close'}/>
                             </div>
                             <img src={mainImage.image_path} />
@@ -184,7 +184,7 @@ const AdminMedia = ({ products }) => {
                         <div className="other-media_list flex-row wrap-grid">
                             {additionalImages.map((el) => {
                                 return <div className="four-desc-grid">
-                                    <div className="delete_media" onClick={() => {deleteImageHandler(el.public_id)}}>
+                                    <div className="delete_media standart-icon" onClick={() => {deleteImageHandler(el.public_id)}}>
                                         <Icons icon={'close'}/>
                                     </div>
                                     <img src={el.image_path} />
@@ -202,7 +202,7 @@ const AdminMedia = ({ products }) => {
                         <div className="other-media_list flex-row wrap-grid">
                             {videos.map((el) => {
                                 return <div className="four-desc-grid">
-                                    <div className="delete_media" onClick={() => {deleteImageHandler(el.public_id)}}>
+                                    <div className="delete_media standart-icon" onClick={() => {deleteImageHandler(el.public_id)}}>
                                     <Icons icon={'close'}/>
                                     </div>
                                     <img src={"http://res.cloudinary.com/dztn3fgbp/video/upload/" + el.public_id + '.jpg'} />

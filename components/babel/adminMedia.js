@@ -326,7 +326,7 @@ var AdminMedia = function AdminMedia(_ref3) {
                             null,
                             React.createElement(
                                 "div",
-                                { className: "delete_media", onClick: function onClick() {
+                                { className: "delete_media standart-icon", onClick: function onClick() {
                                         deleteImageHandler(mainImage.public_id);
                                     } },
                                 React.createElement(Icons, { icon: 'close' })
@@ -367,7 +367,7 @@ var AdminMedia = function AdminMedia(_ref3) {
                                     { className: "four-desc-grid" },
                                     React.createElement(
                                         "div",
-                                        { className: "delete_media", onClick: function onClick() {
+                                        { className: "delete_media standart-icon", onClick: function onClick() {
                                                 deleteImageHandler(el.public_id);
                                             } },
                                         React.createElement(Icons, { icon: 'close' })
@@ -394,7 +394,7 @@ var AdminMedia = function AdminMedia(_ref3) {
                                     { className: "four-desc-grid" },
                                     React.createElement(
                                         "div",
-                                        { className: "delete_media", onClick: function onClick() {
+                                        { className: "delete_media standart-icon", onClick: function onClick() {
                                                 deleteImageHandler(el.public_id);
                                             } },
                                         React.createElement(Icons, { icon: 'close' })

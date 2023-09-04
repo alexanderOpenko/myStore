@@ -8,10 +8,15 @@
 }
 
 .cart-item_info {
-    padding: 0 15px 15px;
+    padding: 0 15px 0;
 }
 
-.q-icon {
-    width: 15px;
-    height: 20px;
+.cart .standart-icon {
+    max-width: 20px;
+}
+
+.cart-count {
+    background: black;
+    color: white;
+    border-radius: 100%;
 }

@@ -5,7 +5,7 @@ const PopUp = ({background = 'white', children, active, setActive}) => {
     return <div className={"pop-up absolute " + active}>
         <div className="pop-up_content" style={{background: background}}>
             <div className="close-popup">
-                <div className="close-popup-icon pointer" onClick={() => setActive('inactive')}>
+                <div className="close-popup-icon pointer standart-icon" onClick={() => setActive('inactive')}>
                     <Icons icon={'close'}/>
                 </div>
             </div>

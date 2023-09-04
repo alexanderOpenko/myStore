@@ -2,6 +2,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 import React, { useState } from "react";
 import ProductsFilter from "./productsFilter";
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 var Products = function Products(_ref) {
   var products = _ref.products;
@@ -34,7 +35,6 @@ var Products = function Products(_ref) {
         }) : true;
         var priceMatch = priceFilterOptions.length ? price >= priceFilterOptions[0] && price <= priceFilterOptions[1] : true; // range - это массив из двух элементов: минимальная и максимальная цена
 
-        // возвращаем только те товары, которые удовлетворяют всем трем условиям
         return colorMatch && sizeMatch && priceMatch;
       });
 
@@ -50,41 +50,45 @@ var Products = function Products(_ref) {
       { className: "container flex-row" },
       React.createElement(
         "div",
-        { className: "products_filters mr-30" },
-        React.createElement(ProductsFilter, { handleFilters: handleProductsByFilters })
-      ),
-      React.createElement(
-        "div",
-        { className: "products-list flex-row wrap-grid" },
+        { className: "products-list flex-row wrap-grid mr-30 width80" },
         allproducts.map(function (el, i) {
           return React.createElement(
             "div",
-            { key: i, className: "product four-desc-grid" },
+            { key: i, className: "product four-desc-grid flex-column" },
             React.createElement(
               "a",
-              { href: "/products?p=" + el.sku },
+              { href: "/products?p=" + el.sku, "class": "flex-column flex-between heigth100" },
               React.createElement(
                 "div",
-                { className: "product_image" },
-                React.createElement("img", { src: el.image_path })
+                { className: "product_image heigth100 mb-10" },
+                React.createElement(LazyLoadImage, {
+                  className: "heigth100 cover",
+                  src: el.image_path
+                })
               ),
               React.createElement(
                 "div",
                 { className: "product_info" },
                 React.createElement(
                   "div",
-                  { className: "product_info-name" },
+                  { className: "product_info-name mb-10 bold-label" },
                   el.name
                 ),
                 React.createElement(
                   "div",
                   { className: "product_info-price" },
-                  el.price
+                  el.price,
+                  " \u20B4"
                 )
               )
             )
           );
         })
+      ),
+      React.createElement(
+        "div",
+        { className: "products_filters width20" },
+        React.createElement(ProductsFilter, { collection: products[0].collection, handleFilters: handleProductsByFilters })
       )
     )
   );

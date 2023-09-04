@@ -2,6 +2,8 @@
 session_start();
 require('router.php');
 require_once('connect.php');
+require 'Assets/icons.php';
+
 
 define("BASE_DIR", dirname(__FILE__));
 

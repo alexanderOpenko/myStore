@@ -15,10 +15,10 @@ var Cart = function Cart() {
       cartToggleClass = _useState2[0],
       setCartToggleClass = _useState2[1];
 
-  var _useState3 = useState([]),
+  var _useState3 = useState({ cart: [] }),
       _useState4 = _slicedToArray(_useState3, 2),
-      cart = _useState4[0],
-      setCart = _useState4[1];
+      cartData = _useState4[0],
+      setCartData = _useState4[1];
 
   var getCart = function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee() {
@@ -39,7 +39,7 @@ var Cart = function Cart() {
               json = _context.sent;
 
 
-              setCart(json.body);
+              setCartData(json.body);
 
             case 7:
             case "end":
@@ -86,7 +86,7 @@ var Cart = function Cart() {
               json = _context2.sent;
 
 
-              setCart(json.body);
+              setCartData(json.body);
 
             case 11:
             case "end":
@@ -102,21 +102,31 @@ var Cart = function Cart() {
   }();
 
   var toggleCartHandler = function toggleCartHandler(className) {
+    document.querySelector('.mask').classList.toggle('mask-background');
     setCartToggleClass(className);
   };
-  console.log(cart, 'cart');
+
   return React.createElement(
     "div",
     null,
     React.createElement(
       "div",
-      { className: "cart-icon", onClick: function onClick() {
-          return toggleCartHandler('slide_in-right');
-        } },
+      null,
       React.createElement(
-        "svg",
-        { xmlns: "http://www.w3.org/2000/svg", width: "24px", height: "24px", viewBox: "0 0 24 24", fill: "none" },
-        React.createElement("path", { d: "M2 2h4v4h16v11H4V4H2V2zm4 13h14V8H6v7zm0 4h3v3H6v-3zm14 0h-3v3h3v-3z", fill: "black" })
+        "div",
+        { className: "align-center justify-center standart-icon flex-row cart-count" },
+        cartData.cart.length ? cartData.total_count : 0
+      ),
+      React.createElement(
+        "div",
+        { className: "cart-icon standart-icon", onClick: function onClick() {
+            return toggleCartHandler('slide_in-right');
+          } },
+        React.createElement(
+          "svg",
+          { xmlns: "http://www.w3.org/2000/svg", width: "24px", height: "24px", viewBox: "0 0 24 24", fill: "none" },
+          React.createElement("path", { d: "M2 2h4v4h16v11H4V4H2V2zm4 13h14V8H6v7zm0 4h3v3H6v-3zm14 0h-3v3h3v-3z", fill: "black" })
+        )
       )
     ),
     React.createElement(
@@ -124,77 +134,148 @@ var Cart = function Cart() {
       { className: "cart tray " + cartToggleClass },
       React.createElement(
         "div",
-        { className: "close", onClick: function onClick() {
+        { className: "close standart-icon mb-20", onClick: function onClick() {
             return toggleCartHandler('slide_out-right');
           } },
-        "close"
+        React.createElement(Icons, { icon: 'close' })
       ),
       React.createElement(
         "div",
-        { "class": "cart-list" },
-        cart.map(function (el, i) {
+        { className: "cart-list" },
+        cartData.cart.map(function (el) {
           return React.createElement(
             "div",
-            { "class": "cart-item" },
+            { key: el.id },
             React.createElement(
               "div",
-              { "class": "cart-item_image" },
-              React.createElement("img", { src: el.image_path })
-            ),
-            React.createElement(
-              "div",
-              { "class": "cart-item_info" },
+              { className: "cart-item" },
               React.createElement(
                 "div",
-                { "class": "mb-10" },
-                el.name + '/' + el.sku
+                { className: "cart-item_image" },
+                React.createElement("img", { src: el.image_path })
               ),
               React.createElement(
                 "div",
-                { className: "flex-row mb-10" },
-                "\u043A\u0456\u043B\u044C\u043A\u0456\u0441\u0442\u044C:",
+                { className: "width100" },
                 React.createElement(
                   "div",
-                  { className: "q-icon ml-5", onClick: function onClick() {
-                      return cartQuantityHandler('Decrease', el.sku, el.size);
-                    } },
-                  React.createElement(Icons, { icon: 'minus' })
+                  { className: "flex-row flex-between" },
+                  React.createElement(
+                    "div",
+                    { className: "cart-item_info" },
+                    React.createElement(
+                      "div",
+                      { className: "mb-10 align-center" },
+                      React.createElement(
+                        "div",
+                        { className: "mr-10" },
+                        el.name + '/' + el.sku
+                      )
+                    ),
+                    React.createElement(
+                      "div",
+                      { className: "flex-row mb-10 align-center" },
+                      "\u043A\u0456\u043B\u044C\u043A\u0456\u0441\u0442\u044C:",
+                      React.createElement(
+                        "div",
+                        { className: "mini-icon ml-5", onClick: function onClick() {
+                            return cartQuantityHandler('Decrease', el.sku, el.size);
+                          } },
+                        React.createElement(Icons, { icon: 'minus' })
+                      ),
+                      React.createElement(
+                        "div",
+                        { className: "ml-5" },
+                        el.cart_quantity
+                      ),
+                      React.createElement(
+                        "div",
+                        { className: "mini-icon ml-5", onClick: function onClick() {
+                            return cartQuantityHandler('Add', el.sku, el.size);
+                          } },
+                        React.createElement(Icons, { icon: 'plus' })
+                      )
+                    ),
+                    React.createElement(
+                      "div",
+                      { className: "mb-10" },
+                      "\u0440\u043E\u0437\u043C\u0456\u0440: ",
+                      el.size
+                    ),
+                    React.createElement(
+                      "div",
+                      null,
+                      "\u0446\u0456\u043D\u0430: ",
+                      el.price
+                    )
+                  ),
+                  React.createElement(
+                    "div",
+                    { className: "standart-icon" },
+                    React.createElement(Icons, { icon: "thrash" })
+                  )
                 ),
-                React.createElement(
+                (el.out || el.last) && React.createElement(
                   "div",
-                  { className: "ml-5" },
-                  el.cart_quantity
-                ),
-                React.createElement(
-                  "div",
-                  { className: "q-icon ml-5", onClick: function onClick() {
-                      return cartQuantityHandler('Add', el.sku, el.size);
-                    } },
-                  React.createElement(Icons, { icon: 'plus' })
+                  { className: "warnings" },
+                  el.out && React.createElement(
+                    "div",
+                    { className: "cart-out flex-row align-center flex-end" },
+                    React.createElement(
+                      "div",
+                      { className: "standart-icon error-icon" },
+                      React.createElement(Icons, { icon: 'warning' })
+                    ),
+                    React.createElement(
+                      "div",
+                      { className: "ml-5" },
+                      "\u041D\u0435\u043C\u0430\u0454 \u0432 \u043D\u0430\u044F\u0432\u043D\u043E\u0441\u0442\u0456."
+                    )
+                  ),
+                  el.last && React.createElement(
+                    "div",
+                    { className: "cart-last flex-row align-center flex-end" },
+                    React.createElement(
+                      "div",
+                      { className: "standart-icon warning-icon" },
+                      React.createElement(Icons, { icon: 'warning' })
+                    ),
+                    React.createElement(
+                      "div",
+                      { className: "ml-5" },
+                      "\u041E\u0441\u0442\u0430\u043D\u043D\u0456 \u043E\u0434\u0438\u043D\u0438\u0446\u0456 \u0442\u043E\u0432\u0430\u0440\u0443. \u0412 \u043D\u0430\u044F\u0432\u043D\u043E\u0441\u0442\u0456 ",
+                      el.available_only + (el.available_only == 1 ? ' одиниця' : ' одиниці'),
+                      "."
+                    )
+                  )
                 )
-              ),
-              React.createElement(
-                "div",
-                null,
-                "\u0440\u043E\u0437\u043C\u0456\u0440: ",
-                el.size
               )
             )
           );
         })
       ),
-      !cart.length && React.createElement(
+      !cartData.cart.length && React.createElement(
         "div",
         null,
         "\u041A\u043E\u0440\u0437\u0438\u043D\u0430 \u043F\u0443\u0441\u0442\u0430"
       ),
-      !!cart.length && React.createElement(
-        "button",
-        { "class": "cart-submit" },
+      !!cartData.cart.length && React.createElement(
+        "div",
+        null,
         React.createElement(
-          "a",
-          { href: "/checkout" },
-          "\u041E\u0444\u043E\u0440\u043C\u0438\u0442\u0438 \u0437\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u043D\u044F"
+          "div",
+          { className: "mb-20" },
+          "\u0417\u0430\u0433\u0430\u043B\u044C\u043D\u0430 \u0446\u0456\u043D\u0430: ",
+          cartData.total_price
+        ),
+        React.createElement(
+          "button",
+          { className: "cart-submit primary-button width40" },
+          React.createElement(
+            "a",
+            { href: "/checkout" },
+            "\u041E\u0444\u043E\u0440\u043C\u0438\u0442\u0438"
+          )
         )
       )
     )
