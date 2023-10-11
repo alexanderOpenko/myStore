@@ -10,61 +10,68 @@ import 'swiper/css/scrollbar'
 const ProductPageImages = ({ productId }) => {
     const [activePopUp, setActivePopUp] = useState('inactive')
     const [productMedia, setProductMedia] = useState([])
-    const [activeSlider, setActiveSlider] = useState(0)
+    const [activeSlider, setActiveSlider] = useState(-1)
+    const [windowWidth, setWindowWidth] = useState(770)
 
     const getProductMedia = async () => {
         const resp = await fetch(`/products?get_media=true&id=${productId}`);
         const json = await resp.json()
         const parsedBody = JSON.parse(json.body)
+
+        parsedBody.sort((a, b) => {
+            if (a.media_type === 'main')
+                return -1;
+            if (b.media_type === 'main')
+                return 1;
+            return 0;
+        });
         setProductMedia(parsedBody);
     }
 
     useEffect(() => {
         getProductMedia()
+        const windowWidthValue = window.innerWidth
+        setWindowWidth(windowWidthValue)
     }, [])
 
-    const imageClickHandler = (i) => {
-        setActivePopUp('active')
-        setActiveSlider(i)
+    const imageViewCloseHandler = (action, i = null) => {
+        setActivePopUp(action)
+        window.scrollTo(0,0)
+        document.body.classList.toggle('body-lock')
+        if (i >= 0) {
+            setActiveSlider(i)
+        }
     }
 
     return <div>
         {/* main images */}
-        <div className="wrap-grid flex-row justify-center main-product-images">
+        {windowWidth >= 770 && <div className="wrap-grid flex-row justify-center main-product-images">
             {productMedia.map((el, i) => {
                 const gridClass = i <= 1 ? "two-desc-grid" : "three-desc-grid"
 
                 if (el.media_type != 'video') {
                     return <div
                         key={i}
-                        className={"cursor-zoom " + gridClass}
-                        onClick={() => imageClickHandler(i)}>
+                        className={"product-page-image cursor-zoom " + gridClass}
+                        onClick={() => imageViewCloseHandler('active', i)}>
                         <img src={el.image_path} />
                     </div>
                 }
-            })}
-        </div>
+            })} </div>}
 
-        {/* video */}
-        {productMedia.map((el, i) => {
-            if (el.media_type == 'video') {
-                return <div className="video-player">
-                    <video width="750" height="500" controls>
-                        <source src={el.image_path} type="video/mp4" />
-                    </video>
-                </div>
-            }
-        })}
-
-        <PopUp active={activePopUp} setActive={setActivePopUp}>
+        {activeSlider >= 0 && <PopUp active={activePopUp} setActive={imageViewCloseHandler} >
             <div className="slider-product-page align-center flex-row">
                 <ProductPageImagesSlider images={productMedia} activeSlider={activeSlider} />
             </div>
-        </PopUp>
+        </PopUp>}
+
+        {windowWidth <= 769 && <div className="slider-product-page mobile-slider-page align-center flex-row">
+            <ProductPageImagesSlider images={productMedia} activeSlider={activeSlider} />
+        </div>}
     </div>
 }
 
-const ProductPageImagesSlider = ({ images, activeSlider }) => {
+const ProductPageImagesSlider = ({ images, activeSlider, s }) => {
     const [swiper, setSwiper] = useState(null);
 
     useEffect(() => {
@@ -85,7 +92,9 @@ const ProductPageImagesSlider = ({ images, activeSlider }) => {
         {images.map((el, i) => {
             if (el.media_type != 'video') {
                 return <SwiperSlide key={i}>
-                    <img src={el.image_path} />
+                    <div className="product-page-slide-image">
+                        <img src={el.image_path} />
+                    </div>
                 </SwiperSlide>
             }
         })}

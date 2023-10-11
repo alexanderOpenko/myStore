@@ -2,9 +2,14 @@
     max-width: 100px;
 }
 
+.cart-item_image {
+    max-width: 100px;
+    height: auto;
+}
+
 .cart-item {
     display: flex;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 .cart-item_info {
@@ -20,3 +25,8 @@
     color: white;
     border-radius: 100%;
 }
+
+.cart .warnings {
+    margin-top: 10px
+}
+   

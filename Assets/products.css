@@ -6,4 +6,65 @@
 .filters_list-item {
     padding: 20px 0;
     border-bottom: 1px solid;
+    height: auto;
+}
+
+.product_image {
+    padding-top: 124%;
+}
+
+.products_filters.tray {
+    right: unset;
+    left: 0;
+}
+
+.products-list {
+    padding-top: 55px;
+}
+
+.filter-btn-wrapper {
+    padding: 15px 0 10px;
+    background-color: white;
+    position: fixed;
+    top: 150px;
+    z-index: 2;
+}
+
+.filter-btn {
+    padding: 10px 15px;
+}
+
+.filter-btn .standart-icon {
+    width: 25px;
+}
+
+.filters_list-item .standart-icon {
+    width: 15px;
+    height: 15px;
+}
+
+.mobile-sizes-list {
+    display: none;
+}
+
+.collection-heading {
+    margin: 0 0 30px 0;
+}
+
+@media screen and (max-width: 769px) {
+    .filter-btn-wrapper {
+        top: 95px;
+    }
+
+    .products-list {
+        padding-top: 30px;
+    }
+
+    .mobile-sizes-list {
+        display: block;
+    }
+
+    .desctop-sizes-list, .prodcut-name {
+        display: none;
+    }
 }

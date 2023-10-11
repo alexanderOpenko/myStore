@@ -2,10 +2,13 @@
 include 'View/header.php';
 ?>
 
-<div class="container flex-row">
+<div class="container flex-row flex-column-table">
+    <div>
     <?php
-    include 'View/admin_menu.php';
-    ?>
+        include 'View/admin_menu.php';
+        ?>
+    </div>
+    
     <div class="width100">
         <form class="create-collection flex-row align-center">
             <div class="form-item">

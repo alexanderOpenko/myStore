@@ -1,5 +1,10 @@
 <?php 
+if (!isset($_SESSION['login'])) {
+    header('Location: admin_login');
+    exit;
+}
 require "Models/producers_model.php";
+require 'headers.php';
 
 global $method;
 global $request_data;
@@ -23,6 +28,11 @@ $producer = new Admin_producers();
 
 if ($method == 'POST' && isset($request_data['producer'])) {
     $producer->add_producer($request_data['producer']);
+}
+
+if ($method == 'GET' && isset($request_data->parameters['get_producers_list'])) {
+    set_HTTP_status(200, 'producers_list', $producer->producers);
+    return;
 }
 
 $producer->render();

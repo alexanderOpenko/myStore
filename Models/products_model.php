@@ -40,25 +40,60 @@
         }
     }
 
-    public static function get_cart_variants()
+    public static function get_product_video($id)
     {
         global $connect;
 
-        $sql_query = "SELECT p.name, p.price, po.quantity, po.*, pm.image_path FROM products AS p 
+        $sql_query = "SELECT * FROM products_media WHERE product_id = $id AND media_type = 'video'";
+
+        try {
+            $rows = $connect->query($sql_query);
+            if (!$rows) {
+                throw new Exception($connect->error);
+            }
+            return $rows->fetch_assoc();
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+        }
+    }
+
+    public static function get_cart_variants($variants)
+    {
+        global $connect;
+
+        $sql_query = "SELECT DISTINCT p.name, p.price, po.quantity, po.*, pm.image_path, op.id AS prod_id, op.quantity AS order_quantity FROM products AS p 
         LEFT JOIN product_options AS po 
         ON p.sku = po.sku 
         LEFT JOIN products_media AS pm
         ON p.id = pm.product_id AND pm.media_type = 'main'
+        LEFT JOIN order_products AS op
+        ON po.sku = op.sku and po.size = op.size
         WHERE (";
-
-        foreach ($_SESSION['cart'] as $item) {
+// print_r($_SESSION['cart']);
+        foreach ($variants as $item) {
             $sql_query .= "(po.sku = '" . $item['sku'] . "' and po.size = '" . $item['size'] . "') OR ";
-          }
+        }
 
-          $sql_query = substr($sql_query, 0, -4) . ")";
+        $sql_query = substr($sql_query, 0, -4) . ")";
 
         try {
             $rows = $connect->query($sql_query);
+            if (!$rows) {
+                throw new Exception($connect->error);
+            }
+            return $rows->fetch_all(MYSQLI_ASSOC);
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+        }
+    }
+
+    public static function get_all_available_products() {
+        global $connect;
+
+        $query = "SELECT * from product_options WHERE quantity > 0";
+
+        try {
+            $rows = $connect->query($query);
             if (!$rows) {
                 throw new Exception($connect->error);
             }
@@ -94,7 +129,7 @@
     {
         global $connect;
 
-        $sql_query = "SELECT p.*, p.id AS product_id, po.*, pm.*, pcrs.name AS producer
+        $sql_query = "SELECT p.*, p.id AS product_id, coll.name AS collection, po.*, pm.*, pcrs.name AS producer
         FROM products AS p 
         LEFT JOIN product_options AS po 
         ON p.sku = po.sku 
@@ -102,6 +137,8 @@
         ON p.id = pm.product_id
         LEFT JOIN producers AS pcrs
         ON pcrs.id = p.producer
+        LEFT JOIN collections as coll
+        ON coll.id = p.collection
         WHERE p.sku = '$sku'";
 
         try {
@@ -150,37 +187,63 @@
                     $found = true;
                     if (is_array($newItem['size'])) {
                         // Если размер уже является массивом, то просто добавляем новый размер
-                        $newItem['size'][] = $item['size'];
+                        if ($item['quantity'] > 0) {
+                            $newItem['size'][] = $item['size'];
+                        }
                     }
                     // break;
                 }
             }
             if (!$found) {
                 // Если нет, то добавляем элемент в новый массив как есть
-                $item['size'] = [$item['size']];
-                $newArr[] = $item;
+                $size_value = $item['size'];
+                $item['size'] = [];
+
+                if ($item['quantity'] > 0) {
+                    $item['size'][] = $size_value;
+                }
+
+                if(count($item['size'])) {
+                    $newArr[] = $item;
+                }
             }
         }
         return $newArr;
     }
 
-    public static function get_collection($collection_id)
+    public static function get_collection($collection_name, $brand = false)
     {
         global $connect;
-        if ($collection_id != 'all') {
-            $condition = "WHERE collection = '$collection_id'";
-        } else {
+        if ($collection_name != 'all') {
+            $condition = "WHERE c.name = '$collection_name'";
+        }
+
+        if ($collection_name == 'all') {
             $condition = '';
         };
 
-        $sql_query = "SELECT p.*, c.name AS collection, po.color, po.size, pm.*
+        if ($collection_name == 'Жіночий одяг') {
+            $condition = "WHERE c.name LIKE 'Жін%'";
+        };
+
+        if ($collection_name == 'Чоловічий одяг') {
+            $condition = "WHERE c.name NOT LIKE 'Жін%'";
+        };
+
+        if ($brand) {
+            $condition = "WHERE prodcr.name = '$collection_name'";
+        }
+
+        $sql_query = "SELECT p.*, c.name AS collection, prodcr.name AS producer, po.size, po.quantity, pm.*
         FROM products p
         LEFT JOIN product_options po
         ON p.sku = po.sku
         LEFT JOIN products_media as pm
         ON p.id = pm.product_id AND pm.media_type = 'main'
         LEFT JOIN collections as c
-        ON p.collection = c.id" . " " . $condition . " ORDER BY p.id DESC";
+        ON p.collection = c.id
+        LEFT JOIN producers as prodcr
+        ON p.producer = prodcr.id" . " " . $condition . " ORDER BY p.id DESC";
 
         try {
             $rows = $connect->query($sql_query);

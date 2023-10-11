@@ -15,18 +15,18 @@ class Admin_model
         $collection_id = (int)$data['collection'];
 
         if (!$edit) {
-            $query = "INSERT INTO products (name, color, sku, producer, description, price, weight, collection) 
-            VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+            $query = "INSERT INTO products (name, color, sku, producer, description, compound, measure, price, weight, collection) 
+            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         } else {
-            $query = "UPDATE products SET name = ?, color = ?, sku = ?, producer = ?, description = ?, price = ?, weight = ?, collection = ?
+            $query = "UPDATE products SET name = ?, color = ?, sku = ?, producer = ?, description = ?, compound = ?, measure = ?, price = ?, weight = ?, collection = ?
             where products.sku = '$sku'";
         }
 
         try {
             $prepare_query = $connect->prepare($query);
-            $prepare_query->bind_param('sssissdi', $data['product_name'], $data['color'], $data['sku'], $data['producer'], $data['description'], $data['price'], $weight, $collection_id);
+            $prepare_query->bind_param('sssissssdi', $data['product_name'], $data['color'], $data['sku'], $data['producer'], $data['description'], $data['compound'], $data['measure'], $data['price'], $weight, $collection_id);
             if (!$prepare_query->execute()) {
-                throw new Exception($connect->error);
+                throw new Exception($connect->error . 'ins_upd');
             }
             $delete_variants = self::delete_variants($data['sku']);
 
@@ -100,23 +100,176 @@ class Admin_model
             $api = new AdminApi();
             $result = $api->deleteAssets($public_ids);
             //if result ok
+        }
 
-            $delete_query = "DELETE FROM products_media WHERE product_id = '$product_id'";
-            try {
-                $rows = $connect->query($delete_query);
-                if (!$rows) {
-                    throw new Exception($connect->error);
-                }
-            } catch (Exception $e) {
-                error_log($e->getMessage());
+        $delete_query = "DELETE FROM products_media WHERE product_id = '$product_id'";
+        try {
+            $rows = $connect->query($delete_query);
+            if (!$rows) {
+                throw new Exception($connect->error);
             }
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+        }
+    }
+
+    public static function get_man_slider()
+    {
+        global $connect;
+
+        $sql_query = "SELECT p.*, c.name AS collection, prodcr.name AS producer, pm.*
+        FROM products p
+        LEFT JOIN products_media as pm
+        ON p.id = pm.product_id AND pm.media_type = 'main'
+        LEFT JOIN collections as c
+        ON p.collection = c.id
+        LEFT JOIN producers as prodcr
+        ON p.producer = prodcr.id
+        JOIN man_slider as ms
+        ON ms.product_id = p.sku";
+
+        try {
+            $rows = $connect->query($sql_query);
+            if (!$rows) {
+                throw new Exception($connect->error);
+            }
+
+            $fetchedRows = $rows->fetch_all(MYSQLI_ASSOC);
+            return $fetchedRows;
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+        }
+    }
+
+    public static function get_random_prods() {
+        global $connect;
+
+        $query = "SELECT p.*, c.name AS collection, prodcr.name AS producer, pm.*
+        FROM products p
+        LEFT JOIN products_media as pm
+        ON p.id = pm.product_id AND pm.media_type = 'main'
+        LEFT JOIN collections as c
+        ON p.collection = c.id
+        LEFT JOIN producers as prodcr
+        ON p.producer = prodcr.id
+        ORDER BY RAND()
+        LIMIT 14";
+
+        try {
+            $rows = $connect->query($query);
+            if (!$rows) {
+                throw new Exception($connect->error);
+            }
+
+            $fetchedRows = $rows->fetch_all(MYSQLI_ASSOC);
+            return $fetchedRows;
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+        }
+    }
+
+    public static function insert_man_slider($prods_id)
+    {
+        global $connect;
+
+        $query = "DELETE FROM man_slider";
+
+        try {
+            $result = $connect->query($query);
+            if (!$result) {
+                throw new Exception($connect->error);
+            }
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return 'error';
+        }
+
+        $values = [];
+        $prods = explode(',', $prods_id);
+        foreach ($prods as $selectedOption) {
+            $values[] = "('$selectedOption')";
+        }
+
+        $sql = "INSERT INTO man_slider (product_id) VALUES " . implode(",", $values);
+
+        try {
+            $rows = $connect->query($sql);
+            if (!$rows) {
+                throw new Exception($connect->error);
+            }
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+        }
+    }
+
+
+    //woman
+    public static function get_woman_slider()
+    {
+        global $connect;
+
+        $sql_query = "SELECT p.*, c.name AS collection, prodcr.name AS producer, pm.*
+        FROM products p
+        LEFT JOIN products_media as pm
+        ON p.id = pm.product_id AND pm.media_type = 'main'
+        LEFT JOIN collections as c
+        ON p.collection = c.id
+        LEFT JOIN producers as prodcr
+        ON p.producer = prodcr.id
+        JOIN woman_slider as ms
+        ON ms.product_id = p.sku";
+
+        try {
+            $rows = $connect->query($sql_query);
+            if (!$rows) {
+                throw new Exception($connect->error);
+            }
+
+            $fetchedRows = $rows->fetch_all(MYSQLI_ASSOC);
+            return $fetchedRows;
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+        }
+    }
+
+    public static function insert_woman_slider($prods_id)
+    {
+        global $connect;
+
+        $query = "DELETE FROM woman_slider";
+
+        try {
+            $result = $connect->query($query);
+            if (!$result) {
+                throw new Exception($connect->error);
+            }
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return 'error';
+        }
+
+        $values = [];
+        $prods = explode(',', $prods_id);
+        foreach ($prods as $selectedOption) {
+            $values[] = "('$selectedOption')";
+        }
+
+        $sql = "INSERT INTO woman_slider (product_id) VALUES " . implode(",", $values);
+
+        try {
+            $rows = $connect->query($sql);
+            if (!$rows) {
+                throw new Exception($connect->error);
+            }
+        } catch (Exception $e) {
+            error_log($e->getMessage());
         }
     }
 
     public static function insert_variants($insert_string)
     {
         global $connect;
-        $query = "INSERT INTO product_options (sku, color, size, quantity) VALUES $insert_string";
+        $query = "INSERT INTO product_options (sku, size, quantity) VALUES $insert_string";
 
         try {
             $rows = $connect->query($query);

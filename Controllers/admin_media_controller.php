@@ -1,4 +1,8 @@
 <?php
+if (!isset($_SESSION['login'])) {
+    header('Location: admin_login');
+    exit;
+}
 require "Models/products_model.php";
 require_once  "vendor/autoload.php";
 global $method;
@@ -58,13 +62,15 @@ class Admin_products
         }
     }
 
-    public static function delete_media ($public_id) {
+    public static function delete_media ($id, $public_id = null) {
         global $connect;
+        if ($public_id) {
         Configuration::instance('cloudinary://348514735543642:kdXVOAItlKEP20GxpQBJEkWy0Q0@dztn3fgbp?secure=false');
         $api = new UploadApi();
         $result = $api->destroy($public_id);
+        }
 //if result ok
-        $delete_query = "DELETE FROM products_media WHERE public_id = '$public_id'";
+        $delete_query = "DELETE FROM products_media WHERE id = '$id'";
         try {
             $rows = $connect->query($delete_query);
             if (!$rows) {
@@ -90,7 +96,7 @@ if ($method == 'POST' && $request_data['update_image'] == 'true') {
 } else if ($method == 'POST' && $request_data['other_media'] == 'true') {
     Admin_products::insert_media($request_data['insertString']);
 } else if ($method == 'GET' && isset($request_data->parameters['delete_media'])) {
-    Admin_products::delete_media($request_data->parameters['id']);
+    Admin_products::delete_media($request_data->parameters['path'], $request_data->parameters['id']);
 } else {
     new Admin_products();
 }

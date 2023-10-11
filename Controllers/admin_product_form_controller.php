@@ -1,4 +1,8 @@
 <?php
+if (!isset($_SESSION['login'])) {
+    header('Location: admin_login');
+    exit;
+}
 require "Models/admin_model.php";
 require "Models/products_model.php";
 require "Models/collections_model.php";
@@ -10,7 +14,9 @@ class Admin_Form
 {
     public $edit = false;
     public $product = [];
-    public $size_quantity_pairs = [];
+    public $size_quantity_pairs = [
+        0 => ["option" => "Universal", "quantity" => 0]
+    ];
     public $collections = [];
     public $producers = [];
 

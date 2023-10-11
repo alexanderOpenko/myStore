@@ -2,9 +2,6 @@
     display: none;
 }
 
-.products-count {
-    margin-top: 20px
-}
 
 .product-row {
     display: flex;
@@ -31,6 +28,10 @@
     width: 60%;
 }
 
+.product-media img {
+    height: 90%;
+}
+
 .product-media .warning {
     word-wrap: break-word;
 }
@@ -40,6 +41,7 @@
 }
 
 .main-image {
+    height: 50vh;
     border-bottom: 1px solid black;
 }
 
@@ -49,4 +51,10 @@
 
 .cloudinary-button {
     margin: 15px 0;
+}
+
+@media screen and (max-width: 998px) {
+    .products-list, .product-media {
+        width: 100%;
+    }
 }

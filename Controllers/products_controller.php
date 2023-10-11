@@ -15,13 +15,27 @@ class Products_controller {
         return json_encode($products);
     }
 
+    public function get_product_video($id) {
+        $video = Products_model::get_product_video($id);
+        return json_encode($video);
+    }
+
     public function get_products() {
         $this->products = new Products_model();
         $this->products = $this->products->products;
     }
 
-    public function get_collection($like_str) {
-        $collection = Products_model::get_collection($like_str);
+    public function get_collection($request_data) {
+        $collection = '';
+
+        if (isset($request_data->parameters['brand'])) {
+            $collection = Products_model::get_collection(
+                $request_data->parameters['brand'], true
+            );
+        } else {
+            $collection = Products_model::get_collection($request_data->parameters['collection']);
+        }
+
         $this->products = $collection;
     }
 
@@ -46,8 +60,8 @@ if ($method == 'GET' && !count($request_data->parameters)) {
     $products->render('View/products.php');
 }
 
-if ($method == 'GET' && isset($request_data->parameters['collection'])) {
-    $products->get_collection($request_data->parameters['collection']);
+if ($method == 'GET' && (isset($request_data->parameters['collection']) || isset($request_data->parameters['brand']))) {
+    $products->get_collection($request_data);
     $products->render('View/products.php');
 }
 
@@ -55,3 +69,8 @@ if ($method == 'GET' && isset($request_data->parameters['get_media'])) {
    $product_media = $products->get_product_media($request_data->parameters['id']);
    set_HTTP_status(200, 'success', $product_media);
 }
+
+if ($method == 'GET' && isset($request_data->parameters['get_video'])) {
+    $product_video = $products->get_product_video($request_data->parameters['id']);
+    set_HTTP_status(200, 'success', $product_video);
+ }

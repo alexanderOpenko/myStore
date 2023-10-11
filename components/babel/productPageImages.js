@@ -28,10 +28,15 @@ var ProductPageImages = function ProductPageImages(_ref) {
         productMedia = _useState4[0],
         setProductMedia = _useState4[1];
 
-    var _useState5 = useState(0),
+    var _useState5 = useState(-1),
         _useState6 = _slicedToArray(_useState5, 2),
         activeSlider = _useState6[0],
         setActiveSlider = _useState6[1];
+
+    var _useState7 = useState(770),
+        _useState8 = _slicedToArray(_useState7, 2),
+        windowWidth = _useState8[0],
+        setWindowWidth = _useState8[1];
 
     var getProductMedia = function () {
         var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee() {
@@ -52,9 +57,15 @@ var ProductPageImages = function ProductPageImages(_ref) {
                             json = _context.sent;
                             parsedBody = JSON.parse(json.body);
 
+
+                            parsedBody.sort(function (a, b) {
+                                if (a.media_type === 'main') return -1;
+                                if (b.media_type === 'main') return 1;
+                                return 0;
+                            });
                             setProductMedia(parsedBody);
 
-                        case 8:
+                        case 9:
                         case "end":
                             return _context.stop();
                     }
@@ -69,17 +80,25 @@ var ProductPageImages = function ProductPageImages(_ref) {
 
     useEffect(function () {
         getProductMedia();
+        var windowWidthValue = window.innerWidth;
+        setWindowWidth(windowWidthValue);
     }, []);
 
-    var imageClickHandler = function imageClickHandler(i) {
-        setActivePopUp('active');
-        setActiveSlider(i);
+    var imageViewCloseHandler = function imageViewCloseHandler(action) {
+        var i = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+        setActivePopUp(action);
+        window.scrollTo(0, 0);
+        document.body.classList.toggle('body-lock');
+        if (i >= 0) {
+            setActiveSlider(i);
+        }
     };
 
     return React.createElement(
         "div",
         null,
-        React.createElement(
+        windowWidth >= 770 && React.createElement(
             "div",
             { className: "wrap-grid flex-row justify-center main-product-images" },
             productMedia.map(function (el, i) {
@@ -90,48 +109,42 @@ var ProductPageImages = function ProductPageImages(_ref) {
                         "div",
                         {
                             key: i,
-                            className: "cursor-zoom " + gridClass,
+                            className: "product-page-image cursor-zoom " + gridClass,
                             onClick: function onClick() {
-                                return imageClickHandler(i);
+                                return imageViewCloseHandler('active', i);
                             } },
                         React.createElement("img", { src: el.image_path })
                     );
                 }
-            })
+            }),
+            " "
         ),
-        productMedia.map(function (el, i) {
-            if (el.media_type == 'video') {
-                return React.createElement(
-                    "div",
-                    { className: "video-player" },
-                    React.createElement(
-                        "video",
-                        { width: "750", height: "500", controls: true },
-                        React.createElement("source", { src: el.image_path, type: "video/mp4" })
-                    )
-                );
-            }
-        }),
-        React.createElement(
+        activeSlider >= 0 && React.createElement(
             PopUp,
-            { active: activePopUp, setActive: setActivePopUp },
+            { active: activePopUp, setActive: imageViewCloseHandler },
             React.createElement(
                 "div",
                 { className: "slider-product-page align-center flex-row" },
                 React.createElement(ProductPageImagesSlider, { images: productMedia, activeSlider: activeSlider })
             )
+        ),
+        windowWidth <= 769 && React.createElement(
+            "div",
+            { className: "slider-product-page mobile-slider-page align-center flex-row" },
+            React.createElement(ProductPageImagesSlider, { images: productMedia, activeSlider: activeSlider })
         )
     );
 };
 
 var ProductPageImagesSlider = function ProductPageImagesSlider(_ref3) {
     var images = _ref3.images,
-        activeSlider = _ref3.activeSlider;
+        activeSlider = _ref3.activeSlider,
+        s = _ref3.s;
 
-    var _useState7 = useState(null),
-        _useState8 = _slicedToArray(_useState7, 2),
-        swiper = _useState8[0],
-        setSwiper = _useState8[1];
+    var _useState9 = useState(null),
+        _useState10 = _slicedToArray(_useState9, 2),
+        swiper = _useState10[0],
+        setSwiper = _useState10[1];
 
     useEffect(function () {
         if (swiper) {
@@ -155,7 +168,11 @@ var ProductPageImagesSlider = function ProductPageImagesSlider(_ref3) {
                 return React.createElement(
                     SwiperSlide,
                     { key: i },
-                    React.createElement("img", { src: el.image_path })
+                    React.createElement(
+                        "div",
+                        { className: "product-page-slide-image" },
+                        React.createElement("img", { src: el.image_path })
+                    )
                 );
             }
         })

@@ -1,5 +1,5 @@
 <?php
-function set_HTTP_status ($status, $message, $body = null) {
+function set_HTTP_status ($status, $message, $body = null, $code = null) {
     switch ($status) {
         case '200':
             $status='HTTP/1.0 200 OK';
@@ -20,7 +20,7 @@ function set_HTTP_status ($status, $message, $body = null) {
 
     header($status);
     if (!is_null($message)) {
-       print json_encode(['message' => $message, 'body' => $body], JSON_UNESCAPED_UNICODE);
+       print json_encode(['message' => $message, 'body' => $body, 'code' => $code], JSON_UNESCAPED_UNICODE);
     }
 }
 ?>

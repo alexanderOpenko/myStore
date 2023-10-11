@@ -5,22 +5,34 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 import React, { useState, useRef, useEffect } from "react";
 import Icons from "./icons";
 import { Range } from 'react-range';
+import { sortSizesHook } from "./products";
+// import BrandsList from "./menu";
 
 var PriceFilter = function PriceFilter(_ref) {
-  var handleFiltersFields = _ref.handleFiltersFields;
+  var handleFiltersFields = _ref.handleFiltersFields,
+      data = _ref.data;
 
-  console.log('price');
-  var STEP = 50;
-  var MIN = 0;
-  var MAX = 2000;
+  var STEP = 40;
+  var MIN = data[0];
+  var MAX = data[1];
 
-  var _useState = useState([0, MAX]),
+  var _useState = useState([MIN, MAX]),
       _useState2 = _slicedToArray(_useState, 2),
       rangeValues = _useState2[0],
       setRangValues = _useState2[1];
 
+  if (data[0] == data[1]) {
+    return React.createElement(
+      "div",
+      null,
+      React.createElement("input", { name: "filter_price", className: "hidden-checkbox-input", readOnly: true, value: rangeValues }),
+      "\u0404\u0434\u0438\u043D\u0430 \u0446\u0456\u043D\u0430: ",
+      data[1]
+    );
+  }
+
   useEffect(function () {
-    return handleFiltersFields();
+    handleFiltersFields();
   }, [rangeValues]);
 
   return React.createElement(
@@ -100,15 +112,14 @@ var PriceFilter = function PriceFilter(_ref) {
   );
 };
 
-var colorOptions = ['Black', 'White', 'Silver'];
-
 var ColorFilter = function ColorFilter(_ref4) {
-  var handleFiltersFields = _ref4.handleFiltersFields;
+  var handleFiltersFields = _ref4.handleFiltersFields,
+      data = _ref4.data;
 
   return React.createElement(
     "div",
-    { className: "filter-color flex-row" },
-    colorOptions.map(function (el, i) {
+    { className: "filter-color flex-row wrap-grid" },
+    data.map(function (el, i) {
       return React.createElement(
         "label",
         { key: i, className: "filter-item" },
@@ -118,7 +129,7 @@ var ColorFilter = function ColorFilter(_ref4) {
           type: "checkbox",
           onChange: handleFiltersFields
         }),
-        React.createElement("span", { className: "checkbox-mask checkbox-mask-" + el })
+        React.createElement("span", { className: "checkbox-mask", style: { backgroundColor: el } })
       );
     })
   );
@@ -128,10 +139,12 @@ var SizesFilter = function SizesFilter(_ref5) {
   var handleFiltersFields = _ref5.handleFiltersFields,
       data = _ref5.data;
 
+  var sortedSizes = sortSizesHook({ size: data });
+
   return React.createElement(
     "div",
     null,
-    data.map(function (el, i) {
+    sortedSizes.map(function (el, i) {
       return React.createElement(
         "label",
         { key: i, className: "filter-item" },
@@ -156,36 +169,114 @@ var SizesFilter = function SizesFilter(_ref5) {
   );
 };
 
-var ProductsFilter = function ProductsFilter(_ref6) {
-  var handleFilters = _ref6.handleFilters,
-      collection = _ref6.collection;
+var brandFilter = function brandFilter(_ref6) {
+  var handleFiltersFields = _ref6.handleFiltersFields,
+      data = _ref6.data;
+
+  console.log(data, 'databrands');
+  return React.createElement(
+    "div",
+    null,
+    data.sort(function (a, b) {
+      return a.localeCompare(b);
+    }).map(function (el, i) {
+      return React.createElement(
+        "label",
+        { key: i, className: "filter-item" },
+        React.createElement("input", {
+          className: "hidden-checkbox-input size-input",
+          name: "filter_brand",
+          value: el,
+          type: "checkbox",
+          onChange: handleFiltersFields
+        }),
+        React.createElement(
+          "div",
+          { className: "custom-input" },
+          React.createElement(
+            "span",
+            { className: "custom-input_value" },
+            el
+          )
+        )
+      );
+    })
+  );
+};
+
+var ProductsFilter = function ProductsFilter(_ref7) {
+  var handleFilters = _ref7.handleFilters,
+      collection = _ref7.collection,
+      products = _ref7.products,
+      toggleFilterHandler = _ref7.toggleFilterHandler;
 
   var _useState3 = useState([]),
       _useState4 = _slicedToArray(_useState3, 2),
       activeItems = _useState4[0],
       setActiveItem = _useState4[1];
 
+  var _useState5 = useState([]),
+      _useState6 = _slicedToArray(_useState5, 2),
+      brandsList = _useState6[0],
+      setBrandsList = _useState6[1];
+
+  var _useState7 = useState([]),
+      _useState8 = _slicedToArray(_useState7, 2),
+      maxMinPrices = _useState8[0],
+      setMaxMinPridces = _useState8[1];
+
+  var _useState9 = useState([]),
+      _useState10 = _slicedToArray(_useState9, 2),
+      colorList = _useState10[0],
+      setColorList = _useState10[1];
+
+  var _useState11 = useState([]),
+      _useState12 = _slicedToArray(_useState11, 2),
+      sizesList = _useState12[0],
+      setSizesList = _useState12[1];
+
   var iconPlus = React.createElement(Icons, { icon: 'plus' });
   var iconMinus = React.createElement(Icons, { icon: 'minus' });
   var filterFormRef = useRef(null);
 
-  var standartSizeOptions = ["S", "M", "L", "XL", "XXL", "XXXL"];
+  useEffect(function () {
+    var listOfBrands = [];
+    var listOfColors = [];
+    var listOfSizes = [];
+    var prices = [];
 
-  var shoesSizeOptions = [41, 42, 43];
+    products.forEach(function (el) {
+      if (!listOfBrands.includes(el.producer)) {
+        if (el.producer) {
+          listOfBrands.push(el.producer);
+        }
+      }
 
-  var jeansSizeOptions = [32, 34, 36];
+      if (el.color && !listOfColors.includes(el.color)) {
+        listOfColors.push(el.color);
+      }
 
-  var sizeOptions = [];
+      if (el) {
+        el.size.forEach(function (e) {
+          if (!listOfSizes.includes(e)) {
+            listOfSizes.push(e);
+          }
+        });
+      }
 
-  if (collection == 'T-shirts' || collection == 'T-shirts') {
-    sizeOptions = standartSizeOptions;
-  } else if (collection == 'Jeans') {
-    sizeOptions = jeansSizeOptions;
-  } else if (collection == 'Shoes') {
-    sizeOptions = shoesSizeOptions;
-  }
+      prices.push(el.price);
+    });
+    var max = Math.max.apply(Math, prices);
+    var min = Math.min.apply(Math, prices);
 
-  var filterComponents = [{ title: 'Ціна', name: PriceFilter, data: '' }, { title: 'Колір', name: ColorFilter, data: '' }, { title: 'Розмір', name: SizesFilter, data: sizeOptions }];
+    setMaxMinPridces([min, max]);
+
+    setBrandsList(listOfBrands);
+    setSizesList(listOfSizes);
+    setColorList(listOfColors);
+  }, []);
+
+  var filterComponents = [{ title: 'Ціна', name: PriceFilter, data: maxMinPrices }, { title: 'Колір', name: ColorFilter, data: colorList }, { title: 'Розмір', name: SizesFilter, data: sizesList }, { title: 'Бренд', name: brandFilter, data: brandsList }];
 
   var accordeonHandler = function accordeonHandler(i) {
     setActiveItem(function (prevActiveItems) {
@@ -205,13 +296,24 @@ var ProductsFilter = function ProductsFilter(_ref6) {
     handleFilters(formData);
   };
 
-  return React.createElement(
+  return !!maxMinPrices.length && React.createElement(
     "div",
     { className: "filters" },
     React.createElement(
-      "h1",
-      null,
-      "\u0424\u0456\u043B\u044C\u0442\u0440\u0438"
+      "div",
+      { className: "flex-row align-center flex-between" },
+      React.createElement(
+        "h1",
+        null,
+        "\u0424\u0456\u043B\u044C\u0442\u0440\u0438"
+      ),
+      React.createElement(
+        "div",
+        { className: "standart-icon", onClick: function onClick() {
+            return toggleFilterHandler('slide_out');
+          } },
+        React.createElement(Icons, { icon: 'close' })
+      )
     ),
     React.createElement(
       "div",
@@ -227,13 +329,17 @@ var ProductsFilter = function ProductsFilter(_ref6) {
             { key: i, className: "filters_list-item accordion" },
             React.createElement(
               "div",
-              { className: "filters-title flex-row flex-between", onClick: function onClick() {
+              { className: "filters-title flex-row flex-between pointer", onClick: function onClick() {
                   return accordeonHandler(i);
                 } },
-              el.title,
+              React.createElement(
+                "div",
+                null,
+                el.title
+              ),
               React.createElement(
                 "span",
-                null,
+                { className: "standart-icon" },
                 activeItems.includes(i) ? iconMinus : iconPlus
               )
             ),

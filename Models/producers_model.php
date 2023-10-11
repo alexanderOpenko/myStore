@@ -4,7 +4,7 @@ Class Admin_producers_model {
     public static function get_producers() {
         global $connect;
 
-        $query = "SELECT * FROM producers ORDER BY id DESC";
+        $query = "SELECT * FROM producers ORDER BY name ASC";
 
         try {
             $rows = $connect->query($query);

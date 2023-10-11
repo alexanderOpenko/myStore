@@ -1,4 +1,8 @@
 <?php
+if (!isset($_SESSION['login'])) {
+    header('Location: admin_login');
+    exit;
+}
 require "Models/admin_model.php";
 require "Models/products_model.php";
 

@@ -34,16 +34,16 @@ class Cart_controller {
 
         if(isset($_SESSION['cart'][$variant])) { 
             if (intval($product['quantity']) <= $_SESSION['cart'][$variant]['quantity']) {
-                $this->message[] = "$variant out of stock";
+                $this->message[] = "$variant | out of stock";
                 return;
             }
             
             if (intval($product['quantity']) == $_SESSION['cart'][$variant]['quantity']  + 1) {
-                $this->message[] = "$variant last counts of items";
+                $this->message[] = "$variant | last counts of items";
             }
 
             $_SESSION['cart'][$variant]['quantity']++; 
-            $this->message[] = "$variant added to cart";        
+            $this->message[] = "$variant | added to cart";        
         } else { 
             if ($product['quantity'] > 0) {
                 $_SESSION['cart'][$variant] = [
@@ -53,14 +53,19 @@ class Cart_controller {
                 ];
 
                 if (intval($product['quantity']) == $_SESSION['cart'][$variant]['quantity']) {
-                    $this->message[] = "last counts of item";
+                    $this->message[] = "$variant | last counts of items";
                 }     
 
-                $this->message[] = "$variant added to cart";
+                $this->message[] = "$variant | added to cart";
             } else {
-                $this->message[] = "$variant out of stock";
+                $this->message[] = "$variant | out of stock";
             }
         }
+    }
+
+    public function delete_cart_item($sku, $size) {
+        $variant = $sku . '/' . $size;
+        unset($_SESSION['cart'][$variant]);
     }
   
     public function get_cart_items() {
@@ -70,7 +75,7 @@ class Cart_controller {
             die();
         }
 
-        $cart_items = Products_model::get_cart_variants();
+        $cart_items = Products_model::get_cart_variants($_SESSION['cart']);
         $this->cart_products = $cart_items;
         $this->set_quantity_to_items();
 
@@ -104,6 +109,8 @@ class Cart_controller {
 $cart = new Cart_controller();
 
 if ($method == "POST" && $request_data['action'] == "Add") {
+    // unset($_SESSION['cart']);
+    // return;
     $cart->add_to_cart($request_data['sku'], $request_data['size']);
     $cart->get_cart_items();
 } 
@@ -112,6 +119,11 @@ if ($method == "POST" && $request_data['action'] == "Decrease") {
     $cart->decrease_quantity($request_data['sku'], $request_data['size']);
     $cart->get_cart_items();
 } 
+
+if ($method == "POST" && $request_data['action'] == "Delete") {
+    $cart->delete_cart_item($request_data['sku'], $request_data['size']);
+    $cart->get_cart_items();
+}
 
 if ($method == "GET") {
     $cart->get_cart_items();

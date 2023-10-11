@@ -1,6 +1,7 @@
 <?php
 $header_items = ['sku', 'name'];
-include 'View/header.php';
+require 'View/header.php';
+
 ?>
 
 <head>
@@ -8,10 +9,13 @@ include 'View/header.php';
     <link rel="stylesheet" href="../Assets/grids.css">
 </head>
 
-<div class="flex-row container">
+<div class="flex-row container flex-column-table">
+    <div>
     <?php
-    include 'View/admin_menu.php';
-    ?>
+        include 'View/admin_menu.php';
+        ?>
+    </div>
+
     <div id="admin-media" class="width80" data-products='<?php echo json_encode($this->products, JSON_UNESCAPED_UNICODE); ?>'>
     </div>
 </div>

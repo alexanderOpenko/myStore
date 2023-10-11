@@ -8,20 +8,33 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
 import React, { useEffect, useState } from "react";
 import Icons from "./icons";
+import classNames from "classnames";
 
-var Cart = function Cart() {
-  var _useState = useState(''),
+var Cart = function Cart(_ref) {
+  var setCartLength = _ref.setCartLength,
+      _ref$cartToggleClass = _ref.cartToggleClass,
+      cartToggleClass = _ref$cartToggleClass === undefined ? 'slide_in' : _ref$cartToggleClass,
+      _ref$toggleCartHandle = _ref.toggleCartHandler,
+      toggleCartHandler = _ref$toggleCartHandle === undefined ? null : _ref$toggleCartHandle,
+      _ref$read = _ref.read,
+      read = _ref$read === undefined ? false : _ref$read;
+
+  var _useState = useState({ cart: [] }),
       _useState2 = _slicedToArray(_useState, 2),
-      cartToggleClass = _useState2[0],
-      setCartToggleClass = _useState2[1];
+      cartData = _useState2[0],
+      setCartData = _useState2[1];
 
-  var _useState3 = useState({ cart: [] }),
+  var _useState3 = useState(false),
       _useState4 = _slicedToArray(_useState3, 2),
-      cartData = _useState4[0],
-      setCartData = _useState4[1];
+      preloader = _useState4[0],
+      setPreloader = _useState4[1];
+
+  var setSubmitPreloader = function setSubmitPreloader() {
+    setPreloader(true);
+  };
 
   var getCart = function () {
-    var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee() {
+    var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee() {
       var resp, json;
       return _regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
@@ -40,8 +53,9 @@ var Cart = function Cart() {
 
 
               setCartData(json.body);
+              setCartLength(json.body.total_count);
 
-            case 7:
+            case 8:
             case "end":
               return _context.stop();
           }
@@ -50,16 +64,12 @@ var Cart = function Cart() {
     }));
 
     return function getCart() {
-      return _ref.apply(this, arguments);
+      return _ref2.apply(this, arguments);
     };
   }();
 
-  useEffect(function () {
-    getCart();
-  }, [cartToggleClass]);
-
   var cartQuantityHandler = function () {
-    var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee2(action, sku, size) {
+    var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee2(action, sku, size) {
       var data, resp, json;
       return _regeneratorRuntime.wrap(function _callee2$(_context2) {
         while (1) {
@@ -97,42 +107,23 @@ var Cart = function Cart() {
     }));
 
     return function cartQuantityHandler(_x, _x2, _x3) {
-      return _ref2.apply(this, arguments);
+      return _ref3.apply(this, arguments);
     };
   }();
 
-  var toggleCartHandler = function toggleCartHandler(className) {
-    document.querySelector('.mask').classList.toggle('mask-background');
-    setCartToggleClass(className);
-  };
+  useEffect(function () {
+    getCart();
+  }, [cartToggleClass]);
+
+  var cartClass = classNames('cart', cartToggleClass, { 'tray': !read });
 
   return React.createElement(
     "div",
     null,
     React.createElement(
       "div",
-      null,
-      React.createElement(
-        "div",
-        { className: "align-center justify-center standart-icon flex-row cart-count" },
-        cartData.cart.length ? cartData.total_count : 0
-      ),
-      React.createElement(
-        "div",
-        { className: "cart-icon standart-icon", onClick: function onClick() {
-            return toggleCartHandler('slide_in-right');
-          } },
-        React.createElement(
-          "svg",
-          { xmlns: "http://www.w3.org/2000/svg", width: "24px", height: "24px", viewBox: "0 0 24 24", fill: "none" },
-          React.createElement("path", { d: "M2 2h4v4h16v11H4V4H2V2zm4 13h14V8H6v7zm0 4h3v3H6v-3zm14 0h-3v3h3v-3z", fill: "black" })
-        )
-      )
-    ),
-    React.createElement(
-      "div",
-      { className: "cart tray " + cartToggleClass },
-      React.createElement(
+      { className: cartClass },
+      toggleCartHandler && React.createElement(
         "div",
         { className: "close standart-icon mb-20", onClick: function onClick() {
             return toggleCartHandler('slide_out-right');
@@ -152,7 +143,7 @@ var Cart = function Cart() {
               React.createElement(
                 "div",
                 { className: "cart-item_image" },
-                React.createElement("img", { src: el.image_path })
+                React.createElement("img", { src: el.image_path, className: "cover" })
               ),
               React.createElement(
                 "div",
@@ -211,13 +202,15 @@ var Cart = function Cart() {
                   ),
                   React.createElement(
                     "div",
-                    { className: "standart-icon" },
+                    { className: "standart-icon", onClick: function onClick() {
+                        return cartQuantityHandler('Delete', el.sku, el.size);
+                      } },
                     React.createElement(Icons, { icon: "thrash" })
                   )
                 ),
                 (el.out || el.last) && React.createElement(
                   "div",
-                  { className: "warnings" },
+                  { className: "warnings ml-10" },
                   el.out && React.createElement(
                     "div",
                     { className: "cart-out flex-row align-center flex-end" },
@@ -243,9 +236,8 @@ var Cart = function Cart() {
                     React.createElement(
                       "div",
                       { className: "ml-5" },
-                      "\u041E\u0441\u0442\u0430\u043D\u043D\u0456 \u043E\u0434\u0438\u043D\u0438\u0446\u0456 \u0442\u043E\u0432\u0430\u0440\u0443. \u0412 \u043D\u0430\u044F\u0432\u043D\u043E\u0441\u0442\u0456 ",
-                      el.available_only + (el.available_only == 1 ? ' одиниця' : ' одиниці'),
-                      "."
+                      "\u041E\u0441\u0442\u0430\u043D\u043D\u0456 \u043E\u0434\u0438\u043D\u0438\u0446\u0456 \u0442\u043E\u0432\u0430\u0440\u0443 ",
+                      el.size
                     )
                   )
                 )
@@ -268,13 +260,22 @@ var Cart = function Cart() {
           "\u0417\u0430\u0433\u0430\u043B\u044C\u043D\u0430 \u0446\u0456\u043D\u0430: ",
           cartData.total_price
         ),
-        React.createElement(
-          "button",
-          { className: "cart-submit primary-button width40" },
+        !read && React.createElement(
+          "a",
+          { href: "/checkout" },
           React.createElement(
-            "a",
-            { href: "/checkout" },
-            "\u041E\u0444\u043E\u0440\u043C\u0438\u0442\u0438"
+            "button",
+            { className: "cart-submit primary-button width40", onClick: setSubmitPreloader },
+            !preloader && React.createElement(
+              "div",
+              null,
+              "\u041E\u0444\u043E\u0440\u043C\u0438\u0442\u0438"
+            ),
+            preloader && React.createElement(
+              "div",
+              { className: "cart-preloader" },
+              React.createElement("img", { src: "../../Assets/preloader.gif" })
+            )
           )
         )
       )

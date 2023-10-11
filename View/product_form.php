@@ -1,4 +1,6 @@
 <?php
+require 'View/header.php';
+
 $product_name = $this->product ? $this->product[0]['name'] : '';
 $product_collection = $this->product ? $this->product[0]['collection'] : '';
 $product_producer = $this->product ? $this->product[0]['producer'] : '';
@@ -6,42 +8,39 @@ $sku = $this->product ? $this->product[0]['sku'] : '';
 $brand = $this->product ? $this->product[0]['producer'] : '';
 $color = $this->product ? $this->product[0]['color'] : '';
 $description = $this->product ? $this->product[0]['description'] : '';
+$compound = $this->product ? $this->product[0]['compound'] : '';
+$measure = $this->product ? $this->product[0]['measure'] : '';
 $color = $this->product ? $this->product[0]['color'] : '';
 $price = $this->product ? $this->product[0]['price'] : '';
 $weight = $this->product ? $this->product[0]['weight'] : '';
 $size_quantity = $this->size_quantity_pairs;
 
-include 'View/header.php';
+
 ?>
 
-<div class="container flex-row">
-    <?php
-    include 'View/admin_menu.php';
-    ?>
+<div class="container flex-row flex-column-table">
+    <div>
+        <?php
+        include 'View/admin_menu.php';
+        ?>
+    </div>
 
     <div class="admin-product-form">
         <form class="product-form">
             <input type="hidden" name="action" value="<?php echo $this->edit ? 1 : 0 ?>" />
 
             <div class="flex-row wrap-grid">
-                <div class="form-item flex-row flex-between two-desc-grid">
+                <div class="form-item flex-row flex-between two-desc-grid full-mob-grid">
                     <div class="form-item_lable">Назва товару</div>
                     <input class="form-input" required minlength=3 value="<?php echo $product_name ?>" type="text" name="product_name">
                 </div>
 
-                <div class="form-item flex-row flex-between two-desc-grid">
+                <div class="form-item flex-row flex-between two-desc-grid full-mob-grid">
                     <div class="form-item_lable">Артикул</div>
-                    <input 
-                        class="form-input product-sku<?php echo $this->edit ? ' readonly-input' : ''?>" 
-                        required 
-                        value="<?php echo $sku ?>" 
-                        type="text" 
-                        name="sku"
-                        <?php echo $this->edit ? 'readonly' : ''?>
-                    >
+                    <input class="form-input product-sku<?php echo $this->edit ? ' readonly-input' : '' ?>" required value="<?php echo $sku ?>" type="text" name="sku" <?php echo $this->edit ? 'readonly' : '' ?>>
                 </div>
-                
-                <div class="form-item flex-row flex-between two-desc-grid">
+
+                <div class="form-item flex-row flex-between two-desc-grid full-mob-grid">
                     <div class="form-item_lable">Колекція</div>
                     <select class="form-input" name="collection">
                         <option disabled selected value="0">
@@ -49,17 +48,14 @@ include 'View/header.php';
                         </option>
 
                         <?php foreach ($this->collections as $collection) : ?>
-                            <option 
-                            value=<?php echo $collection['id'] ?>
-                            <?php echo $product_collection == $collection['id'] ? 'selected' : ''?>
-                            >
+                            <option value=<?php echo $collection['id'] ?> <?php echo $product_collection == $collection['id'] ? 'selected' : '' ?>>
                                 <?php echo $collection['name'] ?>
                             </option>
                         <?php endforeach ?>
                     </select>
                 </div>
 
-                <div class="form-item flex-row flex-between two-desc-grid">
+                <div class="form-item flex-row flex-between two-desc-grid full-mob-grid">
                     <div class="form-item_lable">Бренд</div>
                     <select class="form-input" name="producer">
                         <option disabled selected value="0">
@@ -67,32 +63,43 @@ include 'View/header.php';
                         </option>
 
                         <?php foreach ($this->producers as $producer) : ?>
-                            <option 
-                            value=<?php echo $producer['id'] ?>
-                            <?php echo $product_producer == $producer['id'] ? 'selected' : ''?>
-                            >
+                            <option value=<?php echo $producer['id'] ?> <?php echo $product_producer == $producer['id'] ? 'selected' : '' ?>>
                                 <?php echo $producer['name'] ?>
                             </option>
                         <?php endforeach ?>
                     </select>
                 </div>
 
-                <div class="form-item flex-row flex-between two-desc-grid">
+                <div class="form-item flex-row flex-between two-desc-grid full-mob-grid">
                     <div class="form-item_lable">Опис</div>
-                    <input class="form-input" value="<?php echo $description ?>" type="text" name="description">
+                    <textarea class="form-input" value="<?php echo $description ?>" type="text" name="description">
+                        <?php echo $description ?>    
+                    </textarea>
                 </div>
 
-                <div class="form-item flex-row flex-between two-desc-grid">
+                <div class="form-item flex-row flex-between two-desc-grid full-mob-grid">
+                    <div class="form-item_lable">Заміри</div>
+                    <textarea class="form-input" value="<?php echo $measure ?>" type="text" name="measure">
+                        <?php echo $measure ?>    
+                    </textarea>
+                </div>
+
+                <div class="form-item flex-row flex-between two-desc-grid full-mob-grid">
+                    <div class="form-item_lable">Склад</div>
+                    <input class="form-input" required minlength=3 value="<?php echo $compound ?>" type="text" name="compound">
+                </div>
+
+                <div class="form-item flex-row flex-between two-desc-grid full-mob-grid">
                     <div class="form-item_lable">Колір</div>
                     <input class="form-input product-color" required value="<?php echo $color ?>" type="text" name="color">
                 </div>
 
-                <div class="form-item flex-row flex-between two-desc-grid">
+                <div class="form-item flex-row flex-between two-desc-grid full-mob-grid">
                     <div class="form-item_lable">Ціна</div>
                     <input class="form-input" required value="<?php echo $price ?>" type="number" name="price">
                 </div>
 
-                <div class="form-item flex-row flex-between two-desc-grid">
+                <div class="form-item flex-row flex-between two-desc-grid full-mob-grid">
                     <div class="form-item_lable">Вага</div>
                     <input class="form-input" required value="<?php echo $weight ?>" type="number" min="0" step="0.1" name="weight">
                 </div>
@@ -101,16 +108,16 @@ include 'View/header.php';
             <div class="size-quantity-pairs">
                 <div class="sq-list">
                     <?php foreach ($size_quantity as $item) : ?>
-                        <div class="sq_pair flex-row align-center wrap-grid">
-                            <div class="flex-row align-center flex-between two-desc-grid">
+                        <div class="sq_pair flex-row align-center">
+                            <div class="flex-row align-center flex-between mr-15">
                                 <div class="form-item_lable">Розмір</div>
                                 <input required class="form-input sq_pair-size" value="<?php echo $item['option'] ?>" type="text">
                             </div>
 
-                            <div class="flex-row align-center two-desc-grid">
-                                <div class="mr-20">Кількість на складі</div>
+                            <div class="flex-row align-center">
+                                <div class="mr-20">К-ть</div>
                                 <div class="flex-row">
-                                    <input class="form-input sq_pair-quantity mr-20" required value="<?php echo $item['quantity'] ?>" type="number">
+                                    <input class="form-input sq_pair-quantity mr-10" required value="<?php echo $item['quantity'] ?>" type="number">
                                     <div class="delete-sq-pair">
                                         <?php echo icon('close') ?>
                                     </div>
@@ -140,13 +147,13 @@ include 'View/header.php';
     function initDeleteSizeQuantityEvents() {
         const buttons = document.querySelectorAll(".delete-sq-pair");
         buttons.forEach(function(button) {
-        button.addEventListener("click", function() {
-            const parent = button.closest(".sq_pair");
+            button.addEventListener("click", function() {
+                const parent = button.closest(".sq_pair");
 
-            if (parent) {
-            parent.remove();
-            }
-        });
+                if (parent) {
+                    parent.remove();
+                }
+            });
         });
     }
 
@@ -157,13 +164,12 @@ include 'View/header.php';
         const formData = new FormData(form)
         const allSQpairs = document.querySelectorAll('.sq_pair')
         const skuValue = document.querySelector('.product-sku').value
-        const colorValue = document.querySelector('.product-color').value
 
         const rows = [...allSQpairs].map((el) => {
             const sizeValue = el.querySelector('.sq_pair-size').value
             const quantityValue = el.querySelector('.sq_pair-quantity').value
 
-            const valuesArr = [skuValue, colorValue, sizeValue, quantityValue].map(el => {
+            const valuesArr = [skuValue, sizeValue, quantityValue].map(el => {
                 if (typeof el != Number) {
                     return "'" + el + "'"
                 } else {
@@ -192,7 +198,7 @@ include 'View/header.php';
     form.addEventListener('submit', (e) => submitHandler(e))
 
     function addSQHTML() {
-        const html = '<div class="sq_pair flex-row align-center wrap-grid"><div class="flex-row align-center flex-between two-desc-grid"><div class="form-item_lable">Розмір</div><input required class="form-input sq_pair-size" type="text"></div><div class="flex-row align-center two-desc-grid"><div class="mr-20">Кількість на складі</div><div class="flex-row"><input class="form-input sq_pair-quantity mr-20" required type="number"><div class="delete-sq-pair"><?php echo icon("close") ?></div></div></div></div>'
+        const html = '<div class="sq_pair flex-row align-center"><div class="flex-row align-center flex-between mr-15"><div class="form-item_lable">Розмір</div><input required class="form-input sq_pair-size" type="text"></div><div class="flex-row align-center"><div class="mr-20">К-ть</div><div class="flex-row"><input class="form-input sq_pair-quantity mr-10" required type="number"><div class="delete-sq-pair"><?php echo icon("close") ?></div></div></div></div>'
         sqList.insertAdjacentHTML('beforeend', html)
         initDeleteSizeQuantityEvents()
     }

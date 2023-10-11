@@ -100,8 +100,8 @@ const AdminMedia = ({ products }) => {
         setProductMedia(parsedBody);
     }
 
-    const deleteImageHandler = async (pid) => {
-        const resp = await fetch(`/admin_media?delete_media=true&id=${pid}`);
+    const deleteImageHandler = async (pid, path) => {
+        const resp = await fetch(`/admin_media?delete_media=true&id=${pid}&path=${path}`);
         console.log(selectedProduct.id, 'selectedProduct.id');
         getProductMedia(selectedProduct.id);
     }
@@ -123,7 +123,7 @@ const AdminMedia = ({ products }) => {
             {products.length} позиції
         </div>
 
-        <div className="product-images-section">
+        <div className="product-images-section flex-column-table-reverse">
             <div className="products-list">
                 <div className="products-list_header product-row">
                     {headerItems.map((el) => {
@@ -150,26 +150,30 @@ const AdminMedia = ({ products }) => {
 
             <div className="product-media">
                 <div className="main-image">
+                    
                     <h2>
                         Main Image
                     </h2>
 
-                    {mainImage && <div>{mainImage.image_path.includes("dropcommunity") ? <div className="warning">
+                    {mainImage && <div style={{height: '70%'}}>
+                    {mainImage.image_path.includes("dropcommunity") ? 
+                    <div className="warning">
                         BAD IMAGE URL: {mainImage.image_path}
                     </div> : ''}
 
                         <div>
-                            <div className="delete_media standart-icon" onClick={() => {deleteImageHandler(mainImage.public_id)}}>
+                            <div className="delete_media standart-icon" onClick={() => {deleteImageHandler(mainImage.public_id, mainImage.id)}}>
                                 <Icons icon={'close'}/>
                             </div>
+                            
                             <img src={mainImage.image_path} />
                         </div>
                     </div>
                     }
 
-                    <button className="cloudinary-button" onClick={() => mainImageUploadWidget.open()}>
+                    {!mainImage && <button className="cloudinary-button" onClick={() => mainImageUploadWidget.open()}>
                         Upload file
-                    </button>
+                    </button>}
                 </div>
 
                 <div className="other-media">
@@ -184,7 +188,7 @@ const AdminMedia = ({ products }) => {
                         <div className="other-media_list flex-row wrap-grid">
                             {additionalImages.map((el) => {
                                 return <div className="four-desc-grid">
-                                    <div className="delete_media standart-icon" onClick={() => {deleteImageHandler(el.public_id)}}>
+                                    <div className="delete_media standart-icon" onClick={() => {deleteImageHandler(el.public_id, el.id)}}>
                                         <Icons icon={'close'}/>
                                     </div>
                                     <img src={el.image_path} />
@@ -202,7 +206,7 @@ const AdminMedia = ({ products }) => {
                         <div className="other-media_list flex-row wrap-grid">
                             {videos.map((el) => {
                                 return <div className="four-desc-grid">
-                                    <div className="delete_media standart-icon" onClick={() => {deleteImageHandler(el.public_id)}}>
+                                    <div className="delete_media standart-icon" onClick={() => {deleteImageHandler(el.public_id, el.id)}}>
                                     <Icons icon={'close'}/>
                                     </div>
                                     <img src={"http://res.cloudinary.com/dztn3fgbp/video/upload/" + el.public_id + '.jpg'} />

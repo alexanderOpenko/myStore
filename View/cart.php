@@ -2,8 +2,6 @@
     <link rel="stylesheet" href="../Assets/cart.css">
 </head>
 
-<?php include 'View/header.php' ?>
-
 <?php if (isset($_SESSION['cart'])) : ?>
     <div class="container">
         <div class="cart">
@@ -11,7 +9,7 @@
                 <?php foreach ($_SESSION['cart'] as $cart_item => $value) : ?>
                     <div class="cart-item">
                         <div class="cart-item_image">
-                            <img src="<?php echo $value['image']; ?>" />
+                            <img src="<?php echo $value['image']; ?> className="cover"" />
                         </div>
 
                         <div class="cart-item_info">

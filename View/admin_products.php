@@ -1,11 +1,11 @@
-<?php
-include 'View/header.php';
-?>
+<?php require 'View/header.php';?>
 
-<div class="flex-row container">
+<div class="flex-row container flex-column-table">
+    <div>
     <?php
-    include 'View/admin_menu.php';
-    ?>
+        include 'View/admin_menu.php';
+        ?>
+    </div>
 
     <div class="admin-products width100">
         <a href="/admin_product_form" class="admin-products_button">

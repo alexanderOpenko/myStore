@@ -1,4 +1,8 @@
 <?php 
+if (!isset($_SESSION['login'])) {
+    header('Location: admin_login');
+    exit;
+}
 
 class Admin_home {
     public function render() {

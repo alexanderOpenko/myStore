@@ -208,14 +208,14 @@ var AdminMedia = function AdminMedia(_ref3) {
     }();
 
     var deleteImageHandler = function () {
-        var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee4(pid) {
+        var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee4(pid, path) {
             var resp;
             return _regeneratorRuntime.wrap(function _callee4$(_context4) {
                 while (1) {
                     switch (_context4.prev = _context4.next) {
                         case 0:
                             _context4.next = 2;
-                            return fetch("/admin_media?delete_media=true&id=" + pid);
+                            return fetch("/admin_media?delete_media=true&id=" + pid + "&path=" + path);
 
                         case 2:
                             resp = _context4.sent;
@@ -231,7 +231,7 @@ var AdminMedia = function AdminMedia(_ref3) {
             }, _callee4, _this);
         }));
 
-        return function deleteImageHandler(_x6) {
+        return function deleteImageHandler(_x6, _x7) {
             return _ref5.apply(this, arguments);
         };
     }();
@@ -265,7 +265,7 @@ var AdminMedia = function AdminMedia(_ref3) {
         ),
         React.createElement(
             "div",
-            { className: "product-images-section" },
+            { className: "product-images-section flex-column-table-reverse" },
             React.createElement(
                 "div",
                 { className: "products-list" },
@@ -314,7 +314,7 @@ var AdminMedia = function AdminMedia(_ref3) {
                     ),
                     mainImage && React.createElement(
                         "div",
-                        null,
+                        { style: { height: '70%' } },
                         mainImage.image_path.includes("dropcommunity") ? React.createElement(
                             "div",
                             { className: "warning" },
@@ -327,14 +327,14 @@ var AdminMedia = function AdminMedia(_ref3) {
                             React.createElement(
                                 "div",
                                 { className: "delete_media standart-icon", onClick: function onClick() {
-                                        deleteImageHandler(mainImage.public_id);
+                                        deleteImageHandler(mainImage.public_id, mainImage.id);
                                     } },
                                 React.createElement(Icons, { icon: 'close' })
                             ),
                             React.createElement("img", { src: mainImage.image_path })
                         )
                     ),
-                    React.createElement(
+                    !mainImage && React.createElement(
                         "button",
                         { className: "cloudinary-button", onClick: function onClick() {
                                 return mainImageUploadWidget.open();
@@ -368,7 +368,7 @@ var AdminMedia = function AdminMedia(_ref3) {
                                     React.createElement(
                                         "div",
                                         { className: "delete_media standart-icon", onClick: function onClick() {
-                                                deleteImageHandler(el.public_id);
+                                                deleteImageHandler(el.public_id, el.id);
                                             } },
                                         React.createElement(Icons, { icon: 'close' })
                                     ),
@@ -395,7 +395,7 @@ var AdminMedia = function AdminMedia(_ref3) {
                                     React.createElement(
                                         "div",
                                         { className: "delete_media standart-icon", onClick: function onClick() {
-                                                deleteImageHandler(el.public_id);
+                                                deleteImageHandler(el.public_id, el.id);
                                             } },
                                         React.createElement(Icons, { icon: 'close' })
                                     ),
